@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -25,9 +27,17 @@ public class DetailActivityFragment extends Fragment {
         //Now we will handle the Intent we sent from MainActivityFragment here
         Intent intent = getActivity().getIntent();
         if(intent != null & intent.hasExtra(Intent.EXTRA_TEXT)){
-            Integer pos = intent.getIntExtra(Intent.EXTRA_TEXT,0);
+            String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
             ImageView imgView = (ImageView) rootView.findViewById(R.id.detail_imageview);
-            imgView.setImageResource(pos);
+
+            Picasso.with(getContext())
+                    .load(uri)
+                    //.placeholder(R.drawable.sample_0)
+                    .error(R.drawable.sample_7)
+                   // .noFade()
+//                    .resize(55,55)
+//                    .centerCrop()
+                    .into(imgView);
         }
         return rootView;
     }
