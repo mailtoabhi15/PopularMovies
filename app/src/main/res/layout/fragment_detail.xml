@@ -1,18 +1,82 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.udacitynanodegreeapps.android.popularmovies.DetailActivityFragment"
-    tools:showIn="@layout/activity_detail">
+    tools:showIn="@layout/activity_detail"
+    android:orientation="vertical">
 
-    <ImageView
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/detail_imageview"
-        android:src="@drawable/sample_2"/>
+        android:layout_height="wrap_content"
+        android:text="Movie Title"
+        android:id="@+id/textView_title"
+        android:textColor="#3e7ecc"
+        android:textAlignment="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="#5ec2f4"
+        android:capitalize="words" />
 
-</FrameLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="185dp"
+            android:layout_height="185dp"
+            android:id="@+id/detail_imageview"
+            android:src="@drawable/sample_2"
+            android:cropToPadding="false"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:adjustViewBounds="false"
+            android:outlineProvider="background"
+            android:padding="10dp"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Release Date"
+            android:id="@+id/textView_date"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="false"
+            android:layout_toRightOf="@+id/detail_imageview"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Rating"
+            android:id="@+id/textView_avgvote"
+            android:layout_toRightOf="@+id/detail_imageview"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="true"
+            android:padding="10dp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Synopsis"
+        android:id="@+id/textView_plot"
+        android:layout_below="@+id/textView"
+        android:layout_alignRight="@+id/detail_imageview"
+        android:layout_alignEnd="@+id/textView"
+        android:layout_margin="20dp"
+        android:paddingTop="10dp" />
+
+
+</LinearLayout>
