@@ -37,22 +37,7 @@ public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
-    private ArrayAdapter<String> mGridImageAdapter;
-
-    String[] tempImageList = {"http://i.imgur.com/rFLNqWI.jpg",
-            "http://i.imgur.com/C9pBVt7.jpg",
-            "http://i.imgur.com/rT5vXE1.jpg",
-            "http://i.imgur.com/aIy5R2k.jpg",
-            "http://i.imgur.com/MoJs9pT.jpg",
-            "http://i.imgur.com/S963yEM.jpg",
-            "http://i.imgur.com/rLR2cyc.jpg",
-            "http://i.imgur.com/SEPdUIx.jpg",
-            "http://i.imgur.com/aC9OjaM.jpg",
-            "http://i.imgur.com/76Jfv9b.jpg",
-            "http://i.imgur.com/fUX7EIB.jpg",
-            "http://i.imgur.com/syELajx.jpg",
-            "http://i.imgur.com/COzBnru.jpg",
-            "http://i.imgur.com/Z3QjilA.jpg",};
+    private ImageAdapter mGridImageAdapter;
 
     public MainActivityFragment() {
     }
@@ -66,7 +51,7 @@ public class MainActivityFragment extends Fragment {
         mGridImageAdapter = new ImageAdapter(getActivity(),
                 R.layout.grid_item_movies,
                 R.id.grid_item_movies_imageview,
-                tempImageList);
+                new ArrayList<MyMovie>());
 
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview_movies);
@@ -77,9 +62,9 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Toast.makeText(getActivity(),"Movies Pop",Toast.LENGTH_SHORT).show();
-                String imageUri = mGridImageAdapter.getItem(position);
+                MyMovie movieList = mGridImageAdapter.getItem(position);
                 Intent detailAct = new Intent(getActivity(),DetailActivity.class);
-                detailAct.putExtra(Intent.EXTRA_TEXT, imageUri);
+               //detailAct.putExtra("movie",movieList);
                 startActivity(detailAct);
 
             }
@@ -88,20 +73,33 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    //Note:Below Code for Fetching data is being rerenced form the Sunshine App Course.
-    public class FetchMovieTask extends AsyncTask<String,Void,String[]>
-    {
-//        final String BASE_URL = "http://image.tmdb.org/t/p";
-//        final String SIZE = "w185";
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovie();
+    }
 
+    public void updateMovie()
+    {
+        FetchMovieTask movieTask = new FetchMovieTask();
+
+        String sortAlgo = "popularity.desc";
+        movieTask.execute(sortAlgo);
+    }
+
+    //Note:Below Code for Fetching data is being rerenced form the Sunshine App Course.
+    public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
+    {
+//       BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=7cc4c6e656a9febdd4f903137522c890";
+//
         final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
         final String SORT = "sort_by";
         final String APPID = "api_key";
 
-        String sortAlgo = "popularity.desc";
+        //will come in params[0]
         String apiKey = "7cc4c6e656a9febdd4f903137522c890";
 
-        private String [] getMovieDataFromJson(String movieJsonStr, String sortAlgo)
+        private MyMovie [] getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
 
             final String POSTER_PATH = "poster_path";
@@ -114,33 +112,26 @@ public class MainActivityFragment extends Fragment {
 
             JSONArray movieArray = movieJson.getJSONArray("results");
 
+            MyMovie[] movieList = new MyMovie[movieArray.length()];
+
             for (int i = 0; i < movieArray.length(); i++)
             {
-                String posterPath = null;
-                String overview = null;
-                String releaseDate = null;
-                String title = null;
-                String voteAvg = null;
 
                 JSONObject movieObject = movieArray.getJSONObject(i);
 
-                posterPath = movieObject.getString(POSTER_PATH);
-
-                overview = movieObject.getString(OVERVIEW);
-
-                releaseDate = movieObject.getString(RELEASE_DATE);
-
-                title = movieObject.getString(TITLE);
-
-                voteAvg = movieObject.getString(VOTE_AVG);
+                 movieList[i] = new MyMovie(movieObject.getString(TITLE),
+                        movieObject.getString(OVERVIEW),
+                        movieObject.getString(RELEASE_DATE),
+                        movieObject.getString(POSTER_PATH),
+                        movieObject.getDouble(VOTE_AVG));
 
             }
 
-            return null;
+            return movieList;
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected MyMovie[] doInBackground(String... params) {
             if(params.length==0)
             {
                 return null;
@@ -159,7 +150,7 @@ public class MainActivityFragment extends Fragment {
             try {
 
                 Uri movieUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendQueryParameter(SORT, sortAlgo)
+                        .appendQueryParameter(SORT, params[0])
                         .appendQueryParameter(APPID, apiKey)
                         .build();
 
@@ -207,7 +198,7 @@ public class MainActivityFragment extends Fragment {
             try{
                 //Dixit: to parse(as required) response data from server we call below function
                 if(movieJsonStr !=null)
-                    return getMovieDataFromJson(movieJsonStr, sortAlgo);
+                    return getMovieDataFromJson(movieJsonStr);
             }
             catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
@@ -229,12 +220,14 @@ public class MainActivityFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
+        protected void onPostExecute(MyMovie[] result) {
             if( result == null)
                 Toast.makeText(getActivity(),"Please Check Network Connection",Toast.LENGTH_SHORT).show();
             else
             {
-
+                mGridImageAdapter.clear();
+                for(MyMovie movieList : result)
+                    mGridImageAdapter.addAll(movieList);
             }
         }
     }
