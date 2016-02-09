@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -93,7 +94,7 @@ public class MainActivityFragment extends Fragment {
 //        final String BASE_URL = "http://image.tmdb.org/t/p";
 //        final String SIZE = "w185";
 
-        final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+        final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
         final String SORT = "sort_by";
         final String APPID = "api_key";
 
@@ -101,9 +102,39 @@ public class MainActivityFragment extends Fragment {
         String apiKey = "7cc4c6e656a9febdd4f903137522c890";
 
         private String [] getMovieDataFromJson(String movieJsonStr, String sortAlgo)
-                throws JSONException
-        {
+                throws JSONException {
+
+            final String POSTER_PATH = "poster_path";
+            final String OVERVIEW = "overview";
+            final String RELEASE_DATE = "release_date";
+            final String TITLE = "original_title";
+            final String VOTE_AVG = "vote_average";
+
             JSONObject movieJson = new JSONObject(movieJsonStr);
+
+            JSONArray movieArray = movieJson.getJSONArray("results");
+
+            for (int i = 0; i < movieArray.length(); i++)
+            {
+                String posterPath = null;
+                String overview = null;
+                String releaseDate = null;
+                String title = null;
+                String voteAvg = null;
+
+                JSONObject movieObject = movieArray.getJSONObject(i);
+
+                posterPath = movieObject.getString(POSTER_PATH);
+
+                overview = movieObject.getString(OVERVIEW);
+
+                releaseDate = movieObject.getString(RELEASE_DATE);
+
+                title = movieObject.getString(TITLE);
+
+                voteAvg = movieObject.getString(VOTE_AVG);
+
+            }
 
             return null;
         }
@@ -170,12 +201,13 @@ public class MainActivityFragment extends Fragment {
             }
             catch (IOException e) {
                 Log.e(LOG_TAG, "Error",e);
-                return null;
+                movieJsonStr = null;
             }
 
             try{
                 //Dixit: to parse(as required) response data from server we call below function
-                return getMovieDataFromJson(movieJsonStr, sortAlgo);
+                if(movieJsonStr !=null)
+                    return getMovieDataFromJson(movieJsonStr, sortAlgo);
             }
             catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
@@ -193,9 +225,17 @@ public class MainActivityFragment extends Fragment {
                     }
                 }
             }
-
-
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if( result == null)
+                Toast.makeText(getActivity(),"Please Check Network Connection",Toast.LENGTH_SHORT).show();
+            else
+            {
+
+            }
         }
     }
 
