@@ -1,6 +1,7 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,27 +12,25 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Created by abhishek.dixit on 2/3/2016.
  */
-public class ImageAdapter extends ArrayAdapter<String> {
+public class ImageAdapter extends ArrayAdapter<MyMovie> {
 
 
-    public ImageAdapter(Context context, int resource, int textViewResourceId, String[] objects) {
+    public ImageAdapter(Context context, int resource, int textViewResourceId, List<MyMovie> objects) {
         super(context, resource, textViewResourceId, objects);
     }
 
-//    public ImageAdapter(Context context, int resource, List objects) {
-//        super(context, resource, objects);
-//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //to get the object from the ArrayAdapter at the required position
-        String imageUri = getItem(position);
+        MyMovie movie = getItem(position);
 
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item_movies, parent, false);
@@ -44,8 +43,16 @@ public class ImageAdapter extends ArrayAdapter<String> {
 //        //gridImageView.setAdjustViewBounds(true); //to adjust the bounds of this view to preserve the original aspect ratio of the drawable.
 //        gridImageView.setImageResource(nImage);
 
+
+        String base_uri ="http://image.tmdb.org/t/p/";
+        String size = "w185";
+
+        String movieUri = base_uri + size + "/" + movie.posterPath;
+
+        Log.v("ImageAdapter ","Movie Uri: " +movieUri );
+
         Picasso.with(getContext())
-                .load(imageUri)
+                .load(movieUri)
                 .placeholder(R.drawable.sample_0)
                 .error(R.drawable.sample_7)
                 .fit()
