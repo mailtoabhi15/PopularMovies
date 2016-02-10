@@ -67,7 +67,7 @@ public class MainActivityFragment extends Fragment {
                 detailAct.putExtra("title",movieList.title);
                 detailAct.putExtra("overview",movieList.overview);
                 detailAct.putExtra("release",movieList.releaseDate);
-                detailAct.putExtra("poster",movieList.posterPath);
+                detailAct.putExtra("poster", movieList.posterPath);
                 detailAct.putExtra("vote",movieList.voteAvg);
                 startActivity(detailAct);
 
@@ -99,9 +99,6 @@ public class MainActivityFragment extends Fragment {
         final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
         final String SORT = "sort_by";
         final String APPID = "api_key";
-
-        //will come in params[0]
-        String apiKey = "7cc4c6e656a9febdd4f903137522c890";
 
         private MyMovie [] getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
@@ -155,7 +152,7 @@ public class MainActivityFragment extends Fragment {
 
                 Uri movieUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter(SORT, params[0])
-                        .appendQueryParameter(APPID, apiKey)
+                        .appendQueryParameter(APPID, BuildConfig.OPEN_MOVIE_DB_API_KEY)
                         .build();
 
                 URL url = new URL(movieUri.toString());
