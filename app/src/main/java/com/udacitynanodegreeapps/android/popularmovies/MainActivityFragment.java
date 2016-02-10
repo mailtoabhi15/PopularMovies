@@ -64,7 +64,11 @@ public class MainActivityFragment extends Fragment {
                 Toast.makeText(getActivity(),"Movies Pop",Toast.LENGTH_SHORT).show();
                 MyMovie movieList = mGridImageAdapter.getItem(position);
                 Intent detailAct = new Intent(getActivity(),DetailActivity.class);
-               //detailAct.putExtra("movie",movieList);
+                detailAct.putExtra("title",movieList.title);
+                detailAct.putExtra("overview",movieList.overview);
+                detailAct.putExtra("release",movieList.releaseDate);
+                detailAct.putExtra("poster",movieList.posterPath);
+                detailAct.putExtra("vote",movieList.voteAvg);
                 startActivity(detailAct);
 
             }
