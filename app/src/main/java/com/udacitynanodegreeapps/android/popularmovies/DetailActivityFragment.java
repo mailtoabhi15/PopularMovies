@@ -3,6 +3,7 @@ package com.udacitynanodegreeapps.android.popularmovies;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,39 +24,39 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_detail,container,false);
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         //Now we will handle the Intent we sent from MainActivityFragment here
         Intent intent = getActivity().getIntent();
-        if(intent != null ){
-            String title = intent.getStringExtra("title");
-            ((TextView) rootView.findViewById(R.id.textView_title)).setText(title);
+        if (intent != null && intent.hasExtra("movielist")) {
 
-            String overview = intent.getStringExtra("overview");
-            ((TextView) rootView.findViewById(R.id.textView_overview)).setText(overview);
+            MyMovie movieList = intent.getParcelableExtra("movielist");
 
-            String release = intent.getStringExtra("release");
-            ((TextView) rootView.findViewById(R.id.textView_date)).setText(release);
+            ((TextView) rootView.findViewById(R.id.textView_title)).setText(movieList.title);
 
-            Double vote = intent.getDoubleExtra("vote",0);
-            ((TextView) rootView.findViewById(R.id.textView_avgvote)).setText(vote.toString());
+            TextView plotView = (TextView) rootView.findViewById(R.id.textView_overview);
+            plotView.setText(movieList.overview);
 
 
-            String posterPath = intent.getStringExtra("poster");
+            ((TextView) rootView.findViewById(R.id.textView_date)).setText("Release Date: " + movieList.releaseDate);
+
+            ((TextView) rootView.findViewById(R.id.textView_avgvote)).setText("Avg. Vote: " + movieList.voteAvg);
+
+
             ImageView imgView = (ImageView) rootView.findViewById(R.id.detail_imageview);
 
-            String base_uri ="http://image.tmdb.org/t/p/";
+            String base_uri = "http://image.tmdb.org/t/p/";
             String size = "w185";
-            String posterUri = base_uri + size + "/" + posterPath;
+            String posterUri = base_uri + size + "/" + movieList.posterPath;
 
             Picasso.with(getContext())
                     .load(posterUri)
                     .placeholder(R.drawable.sample_0)
                     .error(R.drawable.sample_7)
-                   // .noFade()
+                            // .noFade()
 //                    .resize(55,55)
 //                    .centerCrop()
-                    .fit()
+                            //.fit()
                     .into(imgView);
         }
         return rootView;

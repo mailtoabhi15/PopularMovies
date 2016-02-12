@@ -37,9 +37,28 @@ public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
+    private ArrayList<MyMovie> movieList;
+
     private ImageAdapter mGridImageAdapter;
 
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState == null || !savedInstanceState.containsKey("moviedeails")){
+            movieList = new ArrayList<MyMovie>();
+        }
+        else{
+            movieList = savedInstanceState.getParcelableArrayList("moviedetails");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("moviedetails", movieList);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -51,7 +70,7 @@ public class MainActivityFragment extends Fragment {
         mGridImageAdapter = new ImageAdapter(getActivity(),
                 R.layout.grid_item_movies,
                 R.id.grid_item_movies_imageview,
-                new ArrayList<MyMovie>());
+                movieList);
 
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview_movies);
@@ -61,14 +80,10 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Toast.makeText(getActivity(),"Movies Pop",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(),"Movies Pop",Toast.LENGTH_SHORT).show();
                 MyMovie movieList = mGridImageAdapter.getItem(position);
                 Intent detailAct = new Intent(getActivity(),DetailActivity.class);
-                detailAct.putExtra("title",movieList.title);
-                detailAct.putExtra("overview",movieList.overview);
-                detailAct.putExtra("release",movieList.releaseDate);
-                detailAct.putExtra("poster", movieList.posterPath);
-                detailAct.putExtra("vote",movieList.voteAvg);
+                detailAct.putExtra("movielist",movieList);
                 startActivity(detailAct);
 
             }
