@@ -1,8 +1,10 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -102,15 +104,17 @@ public class MainActivityFragment extends Fragment {
     {
         FetchMovieTask movieTask = new FetchMovieTask();
 
-        String sortAlgo = "popularity.desc";
+        //Dixit::Fetching Sort value from Shared Prefernces & default is "popularity.desc"
+        SharedPreferences locPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortAlgo = locPref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
         movieTask.execute(sortAlgo);
     }
 
     //Note:Below Code for Fetching data is being rerenced form the Sunshine App Course.
     public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
     {
-//       BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=7cc4c6e656a9febdd4f903137522c890";
-//
+//       BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
+
         final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
         final String SORT = "sort_by";
         final String APPID = "api_key";

@@ -45,7 +45,7 @@ public class DetailActivityFragment extends Fragment {
 
             ImageView imgView = (ImageView) rootView.findViewById(R.id.detail_imageview);
 
-            String base_uri = "http://image.tmdb.org/t/p/";
+            String base_uri = "https://image.tmdb.org/t/p/";
             String size = "w185";
             String posterUri = base_uri + size + "/" + movieList.posterPath;
 
