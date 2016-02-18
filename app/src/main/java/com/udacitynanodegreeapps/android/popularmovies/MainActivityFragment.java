@@ -30,6 +30,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -41,7 +49,11 @@ public class MainActivityFragment extends Fragment {
 
     private ArrayList<MyMovie> movieList;
 
+    private Call<MovieModel> callMyMovieModel;
+
     private ImageAdapter mGridImageAdapter;
+
+    final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/";
 
     public MainActivityFragment() {
     }
@@ -51,10 +63,12 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null || !savedInstanceState.containsKey("moviedeails")){
             movieList = new ArrayList<MyMovie>();
+
         }
         else{
             movieList = savedInstanceState.getParcelableArrayList("moviedetails");
         }
+
     }
 
     @Override
@@ -67,7 +81,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView =  inflater.inflate(R.layout.fragment_main, container, false);
 
         mGridImageAdapter = new ImageAdapter(getActivity(),
                 R.layout.grid_item_movies,
@@ -78,7 +92,7 @@ public class MainActivityFragment extends Fragment {
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview_movies);
         gridview.setAdapter(mGridImageAdapter);
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -98,24 +112,61 @@ public class MainActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
         updateMovie();
+
     }
 
     public void updateMovie()
     {
-        FetchMovieTask movieTask = new FetchMovieTask();
-
-        //Dixit::Fetching Sort value from Shared Prefernces & default is "popularity.desc"
+//        //Dixit::Fetching Sort value from Shared Prefernces & default is "popularity.desc"
         SharedPreferences locPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortAlgo = locPref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
-        movieTask.execute(sortAlgo);
+        String sortAlgo = locPref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MOVIE_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MovieApiService myMovieService = retrofit.create(MovieApiService.class);
+
+        callMyMovieModel = myMovieService.getMovieList(sortAlgo,BuildConfig.OPEN_MOVIE_DB_API_KEY);
+
+        callMyMovieModel.enqueue(new Callback<MovieModel>() {
+            @Override
+            public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+
+                if(response.isSuccess()) {
+
+                    MovieModel movieModel = response.body();
+                    movieList = movieModel.getMovieList();
+                    mGridImageAdapter.clear();
+                    for(MyMovie movies : movieList)
+                        mGridImageAdapter.addAll(movies);
+                }
+                else{
+                    int statusCode =response.code();
+
+                    ResponseBody errorBody = response.errorBody();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieModel> call, Throwable t) {
+                Log.e("getMovieList threw", t.getMessage());
+            }
+        });
+
     }
+
+
+
 
     //Note:Below Code for Fetching data is being rerenced form the Sunshine App Course.
     public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
     {
 //       BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
 
-        final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
+//        final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
         final String SORT = "sort_by";
         final String APPID = "api_key";
 

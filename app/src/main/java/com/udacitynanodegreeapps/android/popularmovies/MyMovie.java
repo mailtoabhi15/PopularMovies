@@ -4,16 +4,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.ArrayAdapter;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by abhishek.dixit on 2/9/2016.
  */
 public class MyMovie implements Parcelable{
 
-    String title = null;
+    @SerializedName("original_title")String title = null;
     String overview = null;
-    String releaseDate = null;
-    String posterPath = null;
-    double voteAvg = 0;
+    @SerializedName("release_date")String releaseDate = null;
+    @SerializedName("poster_path")String posterPath = null;
+    @SerializedName("vote_average")double voteAvg = 0;
 
    public MyMovie(String title, String Overview, String releaseDate, String posterPath, double voteAvg)
     {
@@ -59,4 +61,44 @@ public class MyMovie implements Parcelable{
             return new MyMovie[size];
         }
     };
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public double getVoteAvg() {
+        return voteAvg;
+    }
+
+    public void setVoteAvg(double voteAvg) {
+        this.voteAvg = voteAvg;
+    }
 }
