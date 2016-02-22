@@ -1,9 +1,8 @@
-package com.udacitynanodegreeapps.android.popularmovies;
+package com.udacitynanodegreeapps.android.popmovretro;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,8 +50,8 @@ public class DetailActivityFragment extends Fragment {
 
             Picasso.with(getContext())
                     .load(posterUri)
-                    .placeholder(R.drawable.sample_0)
-                    .error(R.drawable.sample_7)
+                    .placeholder(R.drawable.loading)
+                    .error(R.drawable.error_logo)
                             // .noFade()
 //                    .resize(55,55)
 //                    .centerCrop()

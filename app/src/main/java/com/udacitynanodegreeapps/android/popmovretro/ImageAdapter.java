@@ -1,4 +1,4 @@
-package com.udacitynanodegreeapps.android.popularmovies;
+package com.udacitynanodegreeapps.android.popmovretro;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,15 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by abhishek.dixit on 2/3/2016.
@@ -53,8 +49,8 @@ public class ImageAdapter extends ArrayAdapter<MyMovie> {
 
         Picasso.with(getContext())
                 .load(movieUri)
-                .placeholder(R.drawable.sample_0)
-                .error(R.drawable.sample_7)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error_logo)
                 .fit()
                 .into(gridImageView);
 

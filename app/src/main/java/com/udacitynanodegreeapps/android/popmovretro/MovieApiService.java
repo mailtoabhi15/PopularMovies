@@ -1,11 +1,7 @@
-package com.udacitynanodegreeapps.android.popularmovies;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.udacitynanodegreeapps.android.popmovretro;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**

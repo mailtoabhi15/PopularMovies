@@ -1,4 +1,4 @@
-package com.udacitynanodegreeapps.android.popularmovies;
+package com.udacitynanodegreeapps.android.popmovretro;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -25,12 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -134,16 +129,15 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
 
-                if(response.isSuccess()) {
+                if (response.isSuccess()) {
 
                     MovieModel movieModel = response.body();
                     movieList = movieModel.getMovieList();
                     mGridImageAdapter.clear();
-                    for(MyMovie movies : movieList)
+                    for (MyMovie movies : movieList)
                         mGridImageAdapter.addAll(movies);
-                }
-                else{
-                    int statusCode =response.code();
+                } else {
+                    int statusCode = response.code();
 
                     ResponseBody errorBody = response.errorBody();
                 }

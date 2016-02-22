@@ -1,4 +1,4 @@
-package com.udacitynanodegreeapps.android.popularmovies;
+package com.udacitynanodegreeapps.android.popmovretro;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

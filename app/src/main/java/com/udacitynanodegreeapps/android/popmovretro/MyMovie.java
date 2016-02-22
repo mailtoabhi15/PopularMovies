@@ -1,8 +1,7 @@
-package com.udacitynanodegreeapps.android.popularmovies;
+package com.udacitynanodegreeapps.android.popmovretro;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ArrayAdapter;
 
 import com.google.gson.annotations.SerializedName;
 
