@@ -44,9 +44,9 @@ public class DetailActivityFragment extends Fragment {
 
             ImageView imgView = (ImageView) rootView.findViewById(R.id.detail_imageview);
 
-            String base_uri = "https://image.tmdb.org/t/p/";
-            String size = "w185";
-            String posterUri = base_uri + size + "/" + movieList.posterPath;
+            String image_uri = "https://image.tmdb.org/t/p/";
+            String image_size = "w185";
+            String posterUri = image_uri + image_size + "/" + movieList.posterPath;
 
             Picasso.with(getContext())
                     .load(posterUri)

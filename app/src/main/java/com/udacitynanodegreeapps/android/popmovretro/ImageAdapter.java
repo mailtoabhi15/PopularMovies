@@ -40,8 +40,8 @@ public class ImageAdapter extends ArrayAdapter<MyMovie> {
 //        gridImageView.setImageResource(nImage);
 
 
-        String base_uri ="http://image.tmdb.org/t/p/";
-        String size = "w185";
+        final String base_uri ="http://image.tmdb.org/t/p/";
+        final String size = "w185";
 
         String movieUri = base_uri + size + "/" + movie.posterPath;
 

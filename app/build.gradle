@@ -16,6 +16,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix 'retrofit'
+            versionNameSuffix 'retrofit'
+        }
     }
     buildTypes.each {
         it.buildConfigField 'String', 'OPEN_MOVIE_DB_API_KEY', MyMovieDbApiKey
