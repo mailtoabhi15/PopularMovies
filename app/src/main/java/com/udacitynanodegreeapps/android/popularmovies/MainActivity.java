@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.stetho.Stetho;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -29,6 +31,16 @@ public class MainActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+        //Dixit: imp- Added below code for stetho support in our app, so as to debug/analyse issues
+        //using Chrome://inspect tool on desktop.
+        Stetho.initialize(
+                        Stetho.newInitializerBuilder(this)
+                                      .enableDumpapp(
+                                              Stetho.defaultDumperPluginsProvider(this))
+                                       .enableWebKitInspector(
+                                               Stetho.defaultInspectorModulesProvider(this))
+                                       .build());
+
     }
 
     @Override

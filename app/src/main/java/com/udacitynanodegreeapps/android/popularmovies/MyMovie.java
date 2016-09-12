@@ -9,26 +9,33 @@ import android.widget.ArrayAdapter;
  */
 public class MyMovie implements Parcelable{
 
+    String id = null;
     String title = null;
     String overview = null;
     String releaseDate = null;
     String posterPath = null;
+    String backdropPath = null;
     double voteAvg = 0;
 
-   public MyMovie(String title, String Overview, String releaseDate, String posterPath, double voteAvg)
+   public MyMovie(String id, String title, String Overview, String releaseDate, String posterPath, String backdropPath, double voteAvg)
     {
+        this.id = id;
         this.title = title;
         this.overview = Overview;
         this.releaseDate = releaseDate;
         this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.voteAvg = voteAvg;
     }
 
     public MyMovie(Parcel in) {
+
+        id = in.readString();
         title = in.readString();
         overview = in.readString();
         releaseDate = in.readString();
         posterPath = in.readString();
+        backdropPath = in.readString();
         voteAvg = in.readDouble();
 
     }
@@ -40,10 +47,12 @@ public class MyMovie implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel destParcel, int flags) {
+        destParcel.writeString(id);
         destParcel.writeString(title);
         destParcel.writeString(overview);
         destParcel.writeString(releaseDate);
         destParcel.writeString(posterPath);
+        destParcel.writeString(backdropPath);
         destParcel.writeDouble(voteAvg);
 
     }

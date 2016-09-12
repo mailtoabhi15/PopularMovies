@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 
+import com.facebook.stetho.urlconnection.StethoURLConnectionManager;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -119,14 +121,18 @@ public class MainActivityFragment extends Fragment {
         final String SORT = "sort_by";
         final String APPID = "api_key";
 
+
         private MyMovie [] getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
 
+            final String ID = "id";
             final String POSTER_PATH = "poster_path";
             final String OVERVIEW = "overview";
             final String RELEASE_DATE = "release_date";
             final String TITLE = "original_title";
+            final String BACKDROP_PATH = "backdrop_path";
             final String VOTE_AVG = "vote_average";
+
 
             JSONObject movieJson = new JSONObject(movieJsonStr);
 
@@ -139,11 +145,14 @@ public class MainActivityFragment extends Fragment {
 
                 JSONObject movieObject = movieArray.getJSONObject(i);
 
-                 movieList[i] = new MyMovie(movieObject.getString(TITLE),
-                        movieObject.getString(OVERVIEW),
-                        movieObject.getString(RELEASE_DATE),
-                        movieObject.getString(POSTER_PATH),
-                        movieObject.getDouble(VOTE_AVG));
+                 movieList[i] = new MyMovie(
+                         movieObject.getString(ID),
+                         movieObject.getString(TITLE),
+                         movieObject.getString(OVERVIEW),
+                         movieObject.getString(RELEASE_DATE),
+                         movieObject.getString(POSTER_PATH),
+                         movieObject.getString(BACKDROP_PATH),
+                         movieObject.getDouble(VOTE_AVG));
 
             }
 
@@ -163,6 +172,8 @@ public class MainActivityFragment extends Fragment {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+
+//            StethoURLConnectionManager stethoManager;
 
             // Will contain the raw JSON response as a string.
             String movieJsonStr = null;
@@ -184,6 +195,7 @@ public class MainActivityFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
+
                 StringBuffer buffer = new StringBuffer();
                 if(inputStream == null)
                 {

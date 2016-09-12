@@ -11,8 +11,8 @@
 
     <string name="pref_sort_title">Sort By</string>
 
-    <string name="pref_sort_key" translatable ="false">sortalgo</string>
-    <string name="pref_sort_default" translatable ="false">popularity.desc</string>
+    <string name="pref_sort_key" translatable="false">sortalgo</string>
+    <string name="pref_sort_default" translatable="false">popularity.desc</string>
 
     <string-array name="pref_list_titles">
         <item>Most Popular</item>
@@ -22,6 +22,12 @@
         <item>popularity.desc</item>
         <item>vote_average.desc</item>
     </string-array>
+     <string name="overview">Overview</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="favourite">Favourite</string>
+    <string name="rating">Rating</string>
+    <string name="release_date">Release Date</string>
+    <string name="trailers">Trailers:</string>
 
 
 </resources>
