@@ -1,23 +1,18 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import android.content.SharedPreferences;
 
-import org.w3c.dom.Text;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -80,50 +75,96 @@ public class DetailActivityFragment extends Fragment {
                     //.fit()
                     .into(imgBackdrpView);
 
-            //Set Trailer list
-            {
-                View trailerView = inflater.from(getContext()).inflate(R.layout.trailer_item, container, false);
+            //Add Trailers list
+            addTrailerView(rootView,movieList);
 
-                trailerView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //play youtube yVideo
-                    }
-                });
+            //Add Review List
+            addReviewView(rootView, movieList);
 
-                TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
-                trailerTitle.setText("Trailer text");
-
-                LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
-                trailerLayout.addView(trailerView);
-            }
-
-            //Set Review List
-            {
-                View reviewView = inflater.from(getContext()).inflate(R.layout.review_item, container, false);
-
-                reviewView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //play youtube yVideo
-                    }
-                });
-
-                TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
-                reviewAuthor.setText("Review Author");
-
-                TextView reviewContent = (TextView) reviewView.findViewById(R.id.review_text_content);
-                reviewContent.setText("Review Content");
-
-                LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
-                reviewLayout.addView(reviewView);
-            }
 
         }
         return rootView;
     }
 
+private void addTrailerView(View rootView,MyMovie movieList)
+{
+    final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+    FetchTrailerTask trailerTask = new FetchTrailerTask();
 
+    trailerTask.execute(movieList.id);
 
+    try {
+        MovieTrailer[] trailerList = trailerTask.get();
 
+        for(final MovieTrailer trailerItem : trailerList) {
+
+            View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item,null);
+
+            trailerView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //play youtube yVideo
+                    Uri youtubeUri = Uri.parse(YOUTUBE_BASE_URL).buildUpon()
+                            .appendPath(trailerItem.trailer_source)
+                            .build();
+
+                    Intent watchVideoIntent = new Intent(Intent.ACTION_VIEW,youtubeUri);
+                    startActivity(watchVideoIntent);
+
+                }
+            });
+
+            TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
+            trailerTitle.setText(trailerItem.trailer_title);
+
+            LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
+            trailerLayout.addView(trailerView);
+        }
+
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    }
+
+}
+
+    private void addReviewView(View rootView, MyMovie movieList)
+    {
+
+        FetchReviewTask reviewTask = new FetchReviewTask();
+
+        reviewTask.execute(movieList.id);
+
+        try {
+            MovieReview[] reviewList = reviewTask.get();
+
+            for (final MovieReview reviewItem : reviewList) {
+
+            View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
+
+            reviewView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //open url
+                }
+            });
+
+            TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
+            reviewAuthor.setText(reviewItem.review_author);
+
+            TextView reviewContent = (TextView) reviewView.findViewById(R.id.review_text_content);
+            reviewContent.setText(reviewItem.review_content);
+
+            LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
+            reviewLayout.addView(reviewView);
+        }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

@@ -1,11 +1,8 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
-import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,66 +18,53 @@ import java.net.URL;
 /**
  * Created by abhishek.dixit on 9/17/2016.
  */
-//Note:Below Code for Fetching data is being rerenced form the Sunshine App Course.
-public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
-{
-//       BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
+public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
 
-    public static final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
-    private ImageAdapter mGridImageAdapter;
-    private final Context mContext;
+    public static final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
 
-    public FetchMovieTask(Context context, ImageAdapter imageAdapter)
-    {
-        this.mContext = context;
-        this.mGridImageAdapter = imageAdapter;
-    }
 
-    final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
-    final String SORT = "sort_by";
+    final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie?";
+
     final String APPID = "api_key";
+    final String APEEND_TO_RESPONSE = "append_to_response";
+    final String EXTRA_PARAMS ="trailers";
 
 
-    private MyMovie [] getMovieDataFromJson(String movieJsonStr)
+    private MovieTrailer[] getTrailerDataFromJson(String trailerJsonStr)
             throws JSONException {
 
-        final String ID = "id";
-        final String POSTER_PATH = "poster_path";
-        final String OVERVIEW = "overview";
-        final String RELEASE_DATE = "release_date";
-        final String TITLE = "original_title";
-        final String BACKDROP_PATH = "backdrop_path";
-        final String VOTE_AVG = "vote_average";
+        final String TRAILERS = "trailers";
+        final String YOUTUBE_ARRAY = "youtube";
+        final String TRAILER_TITLE = "name";
+        final String TRAILER_SOURCE = "source";
 
 
-        JSONObject movieJson = new JSONObject(movieJsonStr);
+        JSONObject trailerJson = new JSONObject(trailerJsonStr);
 
-        JSONArray movieArray = movieJson.getJSONArray("results");
+        JSONObject trailerJsonObject = trailerJson.getJSONObject(TRAILERS);
 
-        MyMovie[] movieList = new MyMovie[movieArray.length()];
+        JSONArray trailerArray = trailerJsonObject.getJSONArray(YOUTUBE_ARRAY);
 
-        for (int i = 0; i < movieArray.length(); i++)
+        MovieTrailer[] trailerList = new MovieTrailer[trailerArray.length()];
+
+        for (int i = 0; i < trailerArray.length(); i++)
         {
 
-            JSONObject movieObject = movieArray.getJSONObject(i);
+            JSONObject trailerObject = trailerArray.getJSONObject(i);
 
-            movieList[i] = new MyMovie(
-                    movieObject.getString(ID),
-                    movieObject.getString(TITLE),
-                    movieObject.getString(OVERVIEW),
-                    movieObject.getString(RELEASE_DATE),
-                    movieObject.getString(POSTER_PATH),
-                    movieObject.getString(BACKDROP_PATH),
-                    movieObject.getDouble(VOTE_AVG));
+            trailerList[i] = new MovieTrailer(
+                    trailerObject.getString(TRAILER_TITLE),
+                    trailerObject.getString(TRAILER_SOURCE));
 
         }
 
-        return movieList;
-    }
+        return trailerList;    }
+
 
     @Override
-    protected MyMovie[] doInBackground(String... params) {
+    protected MovieTrailer[] doInBackground(String... params) {
+
         if(params.length==0)
         {
             return null;
@@ -96,14 +80,14 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
 //            StethoURLConnectionManager stethoManager;
 
         // Will contain the raw JSON response as a string.
-        String movieJsonStr = null;
+        String trailerJsonStr = null;
 
         try {
 
             Uri movieUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                    .appendQueryParameter(SORT, params[0])
-                    .appendQueryParameter("vote_average.gte", "5")
+                    .appendPath(params[0])
                     .appendQueryParameter(APPID, BuildConfig.OPEN_MOVIE_DB_API_KEY)
+                    .appendQueryParameter(APEEND_TO_RESPONSE, EXTRA_PARAMS)
                     .build();
 
             URL url = new URL(movieUri.toString());
@@ -135,23 +119,23 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                movieJsonStr = null;
+                trailerJsonStr = null;
             }
-            movieJsonStr = buffer.toString();
+            trailerJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG,"Movie JSON String: " + movieJsonStr);
+            Log.v(LOG_TAG,"Movie JSON String: " + trailerJsonStr);
 
 
         }
         catch (IOException e) {
             Log.e(LOG_TAG, "Error",e);
-            movieJsonStr = null;
+            trailerJsonStr = null;
         }
 
         try{
             //Dixit: to parse(as required) response data from server we call below function
-            if(movieJsonStr !=null)
-                return getMovieDataFromJson(movieJsonStr);
+            if(trailerJsonStr !=null)
+                return getTrailerDataFromJson(trailerJsonStr);
         }
         catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
@@ -172,15 +156,5 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
         return null;
     }
 
-    @Override
-    protected void onPostExecute(MyMovie[] result) {
-        if( result == null)
-            Toast.makeText(mContext,"Please Check Network Connection",Toast.LENGTH_SHORT).show();
-        else
-        {
-            mGridImageAdapter.clear();
-            for(MyMovie movieList : result)
-                mGridImageAdapter.addAll(movieList);
-        }
-    }
+
 }
