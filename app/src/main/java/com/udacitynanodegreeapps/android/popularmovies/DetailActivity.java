@@ -1,5 +1,7 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -34,24 +36,25 @@ public class DetailActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public  void setFavourite(View view){
-
-        CheckBox favourite = (CheckBox) view.findViewById(R.id.chkbox_favourite);
-        if(favourite.isChecked()) {
-            Log.i("Detail:", "Removing Favourite");
-            favourite.setText("Remove From Favourites");
-//            favourite.setChecked(false);
-//            favourite.setButtonDrawable(android.R.drawable.btn_star_big_on);
-        }
-        else {
-            favourite.setText("Add to Favourites");
-//            favourite.setChecked(true);
-//            favourite.setButtonDrawable(android.R.drawable.btn_star_big_off);
-        }
-//        SharedPreferences.Editor setFav = this.getActivity().getSharedPreferences("favourite",Context.MODE_PRIVATE).edit();
-//        setFav.putBoolean("fav",true);
-//        setFav.commit();
-    }
+//    public  void setFavourite(View view){
+//
+//        CheckBox favourite = (CheckBox) view.findViewById(R.id.chkbox_favourite);
+//        if(favourite.isChecked()) {
+//            Log.i("Detail:", "Removing Favourite");
+//            favourite.setText("Remove From Favourites");
+////            favourite.setChecked(false);
+////            favourite.setButtonDrawable(android.R.drawable.btn_star_big_on);
+//        }
+//        else {
+//            favourite.setText("Add to Favourites");
+////            favourite.setChecked(true);
+////            favourite.setButtonDrawable(android.R.drawable.btn_star_big_off);
+//        }
+////       SharedPreferences.Editor setFav = this.getActivity().getSharedPreferences("favourite", Context.MODE_PRIVATE).edit();
+////       setFav.putBoolean("fav",true);
+////        //setFav.
+////        setFav.commit();
+//    }
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {

@@ -1,18 +1,27 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static com.udacitynanodegreeapps.android.popularmovies.R.string.favourite;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -21,6 +30,17 @@ public class DetailActivityFragment extends Fragment {
 
     public DetailActivityFragment() {
     }
+
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        if(savedInstanceState == null || !savedInstanceState.containsKey("moviedetails")){
+//            movieList = new ArrayList<MyMovie>();
+//        }
+//        else{
+//            movieList = savedInstanceState.getParcelableArrayList("moviedetails");
+//        }
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,7 +52,7 @@ public class DetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movielist")) {
 
-            MyMovie movieList = intent.getParcelableExtra("movielist");
+            final MyMovie movieList = intent.getParcelableExtra("movielist");
 
             ((TextView) rootView.findViewById(R.id.textView_title)).setText(movieList.title);
 
@@ -50,7 +70,7 @@ public class DetailActivityFragment extends Fragment {
 
             String base_uri = "https://image.tmdb.org/t/p/";
             String poster_size = "w185";
-            String posterUri = base_uri + poster_size + "/" + movieList.posterPath;
+            final String posterUri = base_uri + poster_size + "/" + movieList.posterPath;
 
             Picasso.with(getContext())
                     .load(posterUri)
@@ -71,9 +91,48 @@ public class DetailActivityFragment extends Fragment {
                     .load(backdropUri)
                     .placeholder(R.drawable.sample_0)
                     .error(R.drawable.sample_7)
-                    // .noFade()
-                    //.fit()
                     .into(imgBackdrpView);
+
+            //set fav
+            final CheckBox favBox = (CheckBox) rootView.findViewById(R.id.chkbox_favourite);
+            final SharedPreferences mfavPref = getActivity().getSharedPreferences("fav_movie", Context.MODE_PRIVATE);
+
+            Map<String, ?> keys = mfavPref.getAll();
+
+            for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                if (entry.getValue().toString() != null)
+                {
+                    Log.d("mfavPref values", entry.getKey() + ": " + entry.getValue().toString());
+                    if (entry.getKey().equals(movieList.id))
+                    {
+                        favBox.setChecked(true);
+                        favBox.setText(R.string.remove_fav);
+                    }
+                }
+            }
+
+            favBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    SharedPreferences.Editor prefEditor = mfavPref.edit();
+
+                    if(isChecked)
+                    {
+                        if (!mfavPref.contains(movieList.id)) {
+                            prefEditor.putString(movieList.id, movieList.posterPath);
+                            prefEditor.apply();
+                            favBox.setText(R.string.remove_fav);
+                        }
+                    }
+                    else
+                    {
+                        prefEditor.remove(movieList.id);
+                        prefEditor.apply();
+                        favBox.setText(R.string.favourite);
+                    }
+                }
+            });
 
             //Add Trailers list
             addTrailerView(rootView,movieList);
@@ -89,12 +148,17 @@ public class DetailActivityFragment extends Fragment {
 private void addTrailerView(View rootView,MyMovie movieList)
 {
     final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+
+    final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/" ;
+
     FetchTrailerTask trailerTask = new FetchTrailerTask();
 
     trailerTask.execute(movieList.id);
 
     try {
         MovieTrailer[] trailerList = trailerTask.get();
+        if(trailerList == null)
+            return;
 
         for(final MovieTrailer trailerItem : trailerList) {
 
@@ -117,6 +181,16 @@ private void addTrailerView(View rootView,MyMovie movieList)
             TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
             trailerTitle.setText(trailerItem.trailer_title);
 
+            ImageView videoThumbnailView = (ImageView) trailerView.findViewById(R.id.trailer_image);
+            String thumbnailUrl = YOUTUBE_THUMBNAIL + trailerItem.trailer_source + "/0.jpg";
+
+            Picasso.with(getContext())
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.sample_0)
+                    .error(android.R.drawable.ic_media_play)
+                    .into(videoThumbnailView);
+
+
             LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
             trailerLayout.addView(trailerView);
         }
@@ -138,17 +212,19 @@ private void addTrailerView(View rootView,MyMovie movieList)
 
         try {
             MovieReview[] reviewList = reviewTask.get();
+            if(reviewList == null)
+                return;
 
             for (final MovieReview reviewItem : reviewList) {
 
             View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
 
-            reviewView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //open url
-                }
-            });
+//            reviewView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    //open url
+//                }
+//            });
 
             TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
             reviewAuthor.setText(reviewItem.review_author);

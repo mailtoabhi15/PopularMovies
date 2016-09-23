@@ -83,8 +83,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:button="@android:drawable/btn_star"
-            android:text="@string/favourite"
-            android:onClick="setFavourite" />
+            android:text="@string/favourite"/>
 
     </RelativeLayout>
 
@@ -115,13 +114,16 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:scrollIndicators="start|end">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/trailer_layout"
             android:orientation="horizontal"
-            android:layout_margin="20dp"/>
+            android:layout_margin="10dp"
+            />
+
     </HorizontalScrollView>
 
     <TextView

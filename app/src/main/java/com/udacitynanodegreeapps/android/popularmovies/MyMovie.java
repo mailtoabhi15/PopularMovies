@@ -1,5 +1,6 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,14 @@ public class MyMovie implements Parcelable{
     String backdropPath = null;
     double voteAvg = 0;
 
+//    private Bitmap posterImage = null;
+
+    public MyMovie(String id,String posterPath)
+    {
+        this.id = id;
+        this.posterPath = posterPath;
+    }
+
    public MyMovie(String id, String title, String Overview, String releaseDate, String posterPath, String backdropPath, double voteAvg)
     {
         this.id = id;
@@ -27,6 +36,14 @@ public class MyMovie implements Parcelable{
         this.backdropPath = backdropPath;
         this.voteAvg = voteAvg;
     }
+
+//    public Bitmap getPosterImage() {
+//        return posterImage;
+//    }
+//
+//    public void setPosterImage(Bitmap posterImage) {
+//        this.posterImage = posterImage;
+//    }
 
     public MyMovie(Parcel in) {
 

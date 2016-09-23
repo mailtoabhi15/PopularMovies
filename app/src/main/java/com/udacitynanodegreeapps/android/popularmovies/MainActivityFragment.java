@@ -1,5 +1,6 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.Map;
 
 import com.facebook.stetho.urlconnection.StethoURLConnectionManager;
 
@@ -52,7 +54,7 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null || !savedInstanceState.containsKey("moviedeails")){
-            movieList = new ArrayList<MyMovie>();
+           movieList = new ArrayList<MyMovie>();
         }
         else{
             movieList = savedInstanceState.getParcelableArrayList("moviedetails");
@@ -85,9 +87,9 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //Toast.makeText(getActivity(),"Movies Pop",Toast.LENGTH_SHORT).show();
-                MyMovie movieList = mGridImageAdapter.getItem(position);
+                MyMovie movieListItem = mGridImageAdapter.getItem(position);
                 Intent detailAct = new Intent(getActivity(),DetailActivity.class);
-                detailAct.putExtra("movielist",movieList);
+                detailAct.putExtra("movielist",movieListItem);
                 startActivity(detailAct);
 
             }
@@ -109,7 +111,25 @@ public class MainActivityFragment extends Fragment {
         //Dixit::Fetching Sort value from Shared Prefernces & default is "popularity.desc"
         SharedPreferences locPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortAlgo = locPref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
-        movieTask.execute(sortAlgo);
+
+        if(sortAlgo.equals("favourite"))
+        {
+            //show favourites
+            mGridImageAdapter.clear();
+            SharedPreferences mfavPrefs = getActivity().getSharedPreferences("fav_movie", Context.MODE_PRIVATE);
+            Map<String, ?> keys = mfavPrefs.getAll();
+            for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                String id = entry.getKey();
+                String poster_path = entry.getValue().toString();
+                MyMovie favMovie = new MyMovie(id,poster_path);
+                mGridImageAdapter.add(favMovie);
+
+            }
+
+
+        }
+        else
+            movieTask.execute(sortAlgo);
     }
 
 
