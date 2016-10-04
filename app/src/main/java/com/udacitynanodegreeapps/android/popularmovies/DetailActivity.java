@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.udacitynanodegreeapps.android.popularmovies.dummy.DummyContent;
 
+import static com.udacitynanodegreeapps.android.popularmovies.DetailActivityFragment.LIST_MOVIES_INDEX;
+
 public class DetailActivity extends AppCompatActivity
         implements ReviewFragment.OnListFragmentInteractionListener
 {
@@ -36,13 +38,27 @@ public class DetailActivity extends AppCompatActivity
 //        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Dixit: // TODO: 9/29/2016
-        // if(savedInstanceState == null){
-//        Intent intent = this.getIntent();
-//        if (intent != null && intent.hasExtra("curMovie")) {
-//            curMovie = (MovieInfo) intent.getSerializableExtra("curMovie");
-        }
+        //Dixit: Added for handling Single pain layout(normal case)
+        if (savedInstanceState == null) {
+            Intent intent = this.getIntent();
+            if (intent != null && intent.hasExtra(LIST_MOVIES_INDEX)) {
 
+                final MyMovie movieListItem = intent.getParcelableExtra(LIST_MOVIES_INDEX);
+
+                Bundle args = new Bundle();
+                args.putParcelable(LIST_MOVIES_INDEX, movieListItem);
+                //now the bundled arguments are set & passed on by call to empty fragmant constructor
+                //& once teh fragmen tis intialised we can't chnage teh arguments , we can only read form them(getArguments())
+                DetailActivityFragment fragment = new DetailActivityFragment();
+                fragment.setArguments(args);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_detail_container, fragment)
+                        .commit();
+            }
+
+        }
+    }
 //    public  void setFavourite(View view){
 //
 //        CheckBox favourite = (CheckBox) view.findViewById(R.id.chkbox_favourite);
