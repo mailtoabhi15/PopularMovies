@@ -15,18 +15,23 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
 
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
 import static com.udacitynanodegreeapps.android.popularmovies.R.string.favourite;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class DetailActivityFragment extends Fragment {
+
+    //Dixit: added in lesson-5.40(2 Pane Ui)-Handling List Item Click
+    static final String LIST_MOVIES_INDEX = "movies_index";
+
+    private MyMovie movieList;
 
     public DetailActivityFragment() {
     }
@@ -41,18 +46,32 @@ public class DetailActivityFragment extends Fragment {
 //            movieList = savedInstanceState.getParcelableArrayList("moviedetails");
 //        }
 //    }
+//
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        outState.putParcelableArrayList("moviedetails", movieList);
+//        super.onSaveInstanceState(outState);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //Dixit-imp:start: added in lesson-5.40(2 Pane Ui)-Handling List Item Click
+        //Reading the saved bundle arguments i.e clicked uri/item, if the activity was killed/started
+        Bundle args = getArguments();
+        if (args!= null) {
+            movieList = args.getParcelable(LIST_MOVIES_INDEX);
+        }
+        //Dixit:end
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         //Now we will handle the Intent we sent from MainActivityFragment here
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra("movielist")) {
+//        Intent intent = getActivity().getIntent();
+        if (movieList !=null) {
 
-            final MyMovie movieList = intent.getParcelableExtra("movielist");
+//            final MyMovie movieList = intent.getParcelableExtra("movielist");
 
             ((TextView) rootView.findViewById(R.id.textView_title)).setText(movieList.title);
 
@@ -120,7 +139,11 @@ public class DetailActivityFragment extends Fragment {
                     if(isChecked)
                     {
                         if (!mfavPref.contains(movieList.id)) {
-                            prefEditor.putString(movieList.id, movieList.posterPath);
+
+                            Gson gson = new Gson();
+                            String jsonFav = gson.toJson(movieList);
+
+                            prefEditor.putString(movieList.id, jsonFav);
                             prefEditor.apply();
                             favBox.setText(R.string.remove_fav);
                         }

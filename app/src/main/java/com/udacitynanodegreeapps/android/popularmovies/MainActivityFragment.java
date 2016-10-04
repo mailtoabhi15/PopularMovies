@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +35,8 @@ import java.util.InputMismatchException;
 import java.util.Map;
 
 import com.facebook.stetho.urlconnection.StethoURLConnectionManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 /**
@@ -47,13 +50,27 @@ public class MainActivityFragment extends Fragment {
 
     private ImageAdapter mGridImageAdapter;
 
+    //Dixit:start:Added in lesson-5.40(2 Pane Ui)-Handling List Item Click
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface ListItemClickCallback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(MyMovie movieListItem);
+    }
+    //Dixit:end
+
     public MainActivityFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null || !savedInstanceState.containsKey("moviedeails")){
+        if(savedInstanceState == null || !savedInstanceState.containsKey("moviedetails")){
            movieList = new ArrayList<MyMovie>();
         }
         else{
@@ -88,9 +105,12 @@ public class MainActivityFragment extends Fragment {
 
                 //Toast.makeText(getActivity(),"Movies Pop",Toast.LENGTH_SHORT).show();
                 MyMovie movieListItem = mGridImageAdapter.getItem(position);
-                Intent detailAct = new Intent(getActivity(),DetailActivity.class);
-                detailAct.putExtra("movielist",movieListItem);
-                startActivity(detailAct);
+                //Dixit:start:updated in lesson-5.40(2 Pane Ui)-Handling List Item Click
+//                Intent detailAct = new Intent(getActivity(),DetailActivity.class);
+//                detailAct.putExtra("movielist",movieListItem);
+//                startActivity(detailAct);
+                ((ListItemClickCallback) getActivity()).onItemSelected(movieListItem);
+                //Dixit:End
 
             }
         });
@@ -120,8 +140,13 @@ public class MainActivityFragment extends Fragment {
             Map<String, ?> keys = mfavPrefs.getAll();
             for (Map.Entry<String, ?> entry : keys.entrySet()) {
                 String id = entry.getKey();
-                String poster_path = entry.getValue().toString();
-                MyMovie favMovie = new MyMovie(id,poster_path);
+                String jsonFav = entry.getValue().toString();
+//                MyMovie favMovie = new MyMovie(id,poster_path);
+                Gson gson = new Gson();
+                //Fetch jsonFavorites from shared preferences
+                Type type = new TypeToken<MyMovie>(){}.getType();
+                //Tells gson that you want a List<MovieData>
+                MyMovie favMovie = gson.fromJson(jsonFav, type);
                 mGridImageAdapter.add(favMovie);
 
             }

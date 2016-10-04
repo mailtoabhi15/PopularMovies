@@ -1,6 +1,7 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,7 +35,13 @@ public class DetailActivity extends AppCompatActivity
 //            }
 //        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+
+        //Dixit: // TODO: 9/29/2016
+        // if(savedInstanceState == null){
+//        Intent intent = this.getIntent();
+//        if (intent != null && intent.hasExtra("curMovie")) {
+//            curMovie = (MovieInfo) intent.getSerializableExtra("curMovie");
+        }
 
 //    public  void setFavourite(View view){
 //

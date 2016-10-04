@@ -1,6 +1,7 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +13,12 @@ import android.view.MenuItem;
 
 import com.facebook.stetho.Stetho;
 
-public class MainActivity extends AppCompatActivity {
+import static com.udacitynanodegreeapps.android.popularmovies.DetailActivityFragment.LIST_MOVIES_INDEX;
+
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.ListItemClickCallback{
+
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,21 @@ public class MainActivity extends AppCompatActivity {
                                                Stetho.defaultInspectorModulesProvider(this))
                                        .build());
 
+        if(findViewById(R.id.fragment_detail_container) != null)
+        {
+            mTwoPane = true;
+
+            if (savedInstanceState == null) {
+//               getSupportFragmentManager().beginTransaction()
+//              .add(R.id.fragment_detail_container,fragment)
+//               .commit();
+
+            }
+        }
+        else{
+            mTwoPane =false;
+        }
+
     }
 
     @Override
@@ -65,5 +86,37 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemSelected(MyMovie movieListItem) {
+
+        if(mTwoPane){
+            //on tablet, means, it will launch DetailFragment
+
+            //Dixit-imp:Saving the clicked Uri as Bundle argument & setting it on to fragment
+            //so that if the device  is rotated or activity starts again, it will
+            //restore the clickuri/index form that point itself, as its in Bundle
+            Bundle args = new Bundle();
+            args.putParcelable(LIST_MOVIES_INDEX,movieListItem);
+            //now the bundled arguments are set & passed on by call to empty fragmant constructor
+            //& once teh fragmen tis intialised we can't chnage teh arguments , we can only read form them(getArguments())
+            DetailActivityFragment fragment = new DetailActivityFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_detail_container,fragment)
+                    .commit();
+
+        }
+        else{
+            //on phone, means, it will launch DetailActivity
+            Intent detailAct = new Intent(this,DetailActivity.class);
+                detailAct.putExtra(LIST_MOVIES_INDEX,movieListItem);
+                startActivity(detailAct);
+        }
+
+
+
     }
 }
