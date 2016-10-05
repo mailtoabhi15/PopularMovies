@@ -158,17 +158,17 @@ public class DetailActivityFragment extends Fragment {
             });
 
             //Add Trailers list
-            addTrailerView(rootView,movieList);
+            addTrailerView(rootView,movieList.id);
 
             //Add Review List
-            addReviewView(rootView, movieList);
+            addReviewView(rootView, movieList.id);
 
 
         }
         return rootView;
     }
 
-private void addTrailerView(View rootView,MyMovie movieList)
+private void addTrailerView(View rootView,String movieId)
 {
     final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
@@ -176,10 +176,12 @@ private void addTrailerView(View rootView,MyMovie movieList)
 
     FetchTrailerTask trailerTask = new FetchTrailerTask();
 
-    trailerTask.execute(movieList.id);
+    trailerTask.execute(movieId);
 
     try {
+        //Dixit-Imp: This iks a Blocking call , Needs to be revisited with/for better design
         MovieTrailer[] trailerList = trailerTask.get();
+
         if(trailerList == null)
             return;
 
@@ -226,15 +228,17 @@ private void addTrailerView(View rootView,MyMovie movieList)
 
 }
 
-    private void addReviewView(View rootView, MyMovie movieList)
+    private void addReviewView(View rootView, String movieId)
     {
 
         FetchReviewTask reviewTask = new FetchReviewTask();
 
-        reviewTask.execute(movieList.id);
+        reviewTask.execute(movieId);
 
         try {
+            //Dixit-Imp: This iks a Blocking call , Needs to be revisited with/for better design
             MovieReview[] reviewList = reviewTask.get();
+
             if(reviewList == null)
                 return;
 
