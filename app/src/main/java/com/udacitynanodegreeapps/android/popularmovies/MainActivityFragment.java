@@ -124,6 +124,11 @@ public class MainActivityFragment extends Fragment {
         updateMovie();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public void updateMovie()
     {
         FetchMovieTask movieTask = new FetchMovieTask(getActivity(), mGridImageAdapter);
