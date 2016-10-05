@@ -33,23 +33,30 @@ public class DetailActivityFragment extends Fragment {
 
     private MyMovie movieList;
 
+    private MovieTrailer[] mtrailerList;
+    private MovieReview[] mreviewList;
+
     public DetailActivityFragment() {
     }
 
 //    @Override
 //    public void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
-//        if(savedInstanceState == null || !savedInstanceState.containsKey("moviedetails")){
-//            movieList = new ArrayList<MyMovie>();
-//        }
-//        else{
-//            movieList = savedInstanceState.getParcelableArrayList("moviedetails");
-//        }
+//       if(savedInstanceState != null )
+//       {
+//           if(savedInstanceState.containsKey("movietrailer")){
+//               mtrailerList = savedInstanceState.getParcelableArray("movietrailer");
+//           }
+//           if(savedInstanceState.containsKey("moviereview")){
+//               mreviewList = savedInstanceState.getParcelableArray("moviereview");
+//           }
+//      }
 //    }
 //
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {
-//        outState.putParcelableArrayList("moviedetails", movieList);
+//        outState.putParcelableArray("movietrailer", mtrailerList);
+//        outState.putParcelableArray("moviereview", mreviewList);
 //        super.onSaveInstanceState(outState);
 //    }
 
@@ -179,13 +186,13 @@ private void addTrailerView(View rootView,String movieId)
     trailerTask.execute(movieId);
 
     try {
-        //Dixit-Imp: This iks a Blocking call , Needs to be revisited with/for better design
-        MovieTrailer[] trailerList = trailerTask.get();
+        //Dixit-Imp: This is a Blocking call , Needs to be revisited with/for better design
+        mtrailerList = trailerTask.get();
 
-        if(trailerList == null)
+        if(mtrailerList == null)
             return;
 
-        for(final MovieTrailer trailerItem : trailerList) {
+        for(final MovieTrailer trailerItem : mtrailerList) {
 
             View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item,null);
 
@@ -237,12 +244,12 @@ private void addTrailerView(View rootView,String movieId)
 
         try {
             //Dixit-Imp: This iks a Blocking call , Needs to be revisited with/for better design
-            MovieReview[] reviewList = reviewTask.get();
+            mreviewList = reviewTask.get();
 
-            if(reviewList == null)
+            if(mreviewList == null)
                 return;
 
-            for (final MovieReview reviewItem : reviewList) {
+            for (final MovieReview reviewItem : mreviewList) {
 
             View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
 

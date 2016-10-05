@@ -13,12 +13,10 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.udacitynanodegreeapps.android.popularmovies.dummy.DummyContent;
 
 import static com.udacitynanodegreeapps.android.popularmovies.DetailActivityFragment.LIST_MOVIES_INDEX;
 
 public class DetailActivity extends AppCompatActivity
-        implements ReviewFragment.OnListFragmentInteractionListener
 {
 
     @Override
@@ -79,9 +77,4 @@ public class DetailActivity extends AppCompatActivity
 ////        setFav.commit();
 //    }
 
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-        Toast toast = Toast.makeText(this,item.id,Toast.LENGTH_SHORT);
-        toast.show();
-    }
 }

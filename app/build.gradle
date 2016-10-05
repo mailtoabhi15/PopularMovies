@@ -17,7 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            applicationIdSuffix 'stetho'
+            applicationIdSuffix 'P2_Submit'
         }
     }
     buildTypes.each {
