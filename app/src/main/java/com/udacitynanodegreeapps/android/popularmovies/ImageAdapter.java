@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,15 @@ public class ImageAdapter extends ArrayAdapter<MyMovie> {
                 .error(R.drawable.sample_7)
                 .fit()
                 .into(gridImageView);
+
+//        try {
+//            movie.setPosterImage(Picasso.with(getContext())
+//                                .load(movieUri)
+//                                .placeholder(R.drawable.sample_0)
+//                                .error(R.drawable.sample_7).get());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         return convertView;
     }
