@@ -20,6 +20,7 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.Button;
 
 import java.util.List;
 
@@ -177,7 +178,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
+//               Dixit-imp: BugFix: handled issue w.r.t the SettingsActivity NavigationUp Button
+//                      refrence:https://developer.android.com/training/implementing-navigation/ancestral.html#NavigateUp
+//                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                NavUtils.navigateUpFromSameTask(getActivity());
                 return true;
             }
             return super.onOptionsItemSelected(item);
