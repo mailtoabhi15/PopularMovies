@@ -51,6 +51,7 @@ public class MainActivityFragment extends Fragment {
     private ImageAdapter mGridImageAdapter;
 
     //Dixit:start:Added in lesson-5.40(2 Pane Ui)-Handling List Item Click
+
     /**
      * A callback interface that all activities containing this fragment must
      * implement. This mechanism allows activities to be notified of item
@@ -70,10 +71,9 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null || !savedInstanceState.containsKey("moviedetails")){
-           movieList = new ArrayList<MyMovie>();
-        }
-        else{
+        if (savedInstanceState == null || !savedInstanceState.containsKey("moviedetails")) {
+            movieList = new ArrayList<MyMovie>();
+        } else {
             movieList = savedInstanceState.getParcelableArrayList("moviedetails");
         }
     }
@@ -88,7 +88,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         mGridImageAdapter = new ImageAdapter(getActivity(),
                 R.layout.grid_item_movies,
@@ -129,16 +129,14 @@ public class MainActivityFragment extends Fragment {
         super.onResume();
     }
 
-    public void updateMovie()
-    {
+    public void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask(getActivity(), mGridImageAdapter);
 
         //Dixit::Fetching Sort value from Shared Prefernces & default is "popularity.desc"
         SharedPreferences locPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortAlgo = locPref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
+        String sortAlgo = locPref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
 
-        if(sortAlgo.equals("favourite"))
-        {
+        if (sortAlgo.equals("favourite")) {
             //show favourites
             mGridImageAdapter.clear();
             SharedPreferences mfavPrefs = getActivity().getSharedPreferences("fav_movie", Context.MODE_PRIVATE);
@@ -149,7 +147,8 @@ public class MainActivityFragment extends Fragment {
 //                MyMovie favMovie = new MyMovie(id,poster_path);
                 Gson gson = new Gson();
                 //Fetch jsonFavorites from shared preferences
-                Type type = new TypeToken<MyMovie>(){}.getType();
+                Type type = new TypeToken<MyMovie>() {
+                }.getType();
                 //Tells gson that you want a List<MovieData>
                 MyMovie favMovie = gson.fromJson(jsonFav, type);
                 mGridImageAdapter.add(favMovie);
@@ -157,13 +156,9 @@ public class MainActivityFragment extends Fragment {
             }
 
 
-        }
-        else
+        } else
             movieTask.execute(sortAlgo);
     }
-
-
-
 
 
 }

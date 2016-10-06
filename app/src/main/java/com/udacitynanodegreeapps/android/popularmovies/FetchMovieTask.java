@@ -22,8 +22,7 @@ import java.net.URL;
  * Created by abhishek.dixit on 9/17/2016.
  */
 //Note:Below Code for Fetching data is being rerenced form the Sunshine App Course.
-public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
-{
+public class FetchMovieTask extends AsyncTask<String, Void, MyMovie[]> {
 //       BASE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
 
     public static final String LOG_TAG = FetchMovieTask.class.getSimpleName();
@@ -31,8 +30,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
     private ImageAdapter mGridImageAdapter;
     private final Context mContext;
 
-    public FetchMovieTask(Context context, ImageAdapter imageAdapter)
-    {
+    public FetchMovieTask(Context context, ImageAdapter imageAdapter) {
         this.mContext = context;
         this.mGridImageAdapter = imageAdapter;
     }
@@ -42,7 +40,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
     final String APPID = "api_key";
 
 
-    private MyMovie [] getMovieDataFromJson(String movieJsonStr)
+    private MyMovie[] getMovieDataFromJson(String movieJsonStr)
             throws JSONException {
 
         final String ID = "id";
@@ -60,8 +58,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
 
         MyMovie[] movieList = new MyMovie[movieArray.length()];
 
-        for (int i = 0; i < movieArray.length(); i++)
-        {
+        for (int i = 0; i < movieArray.length(); i++) {
 
             JSONObject movieObject = movieArray.getJSONObject(i);
 
@@ -81,8 +78,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
 
     @Override
     protected MyMovie[] doInBackground(String... params) {
-        if(params.length==0)
-        {
+        if (params.length == 0) {
             return null;
         }
 
@@ -109,7 +105,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
             URL url = new URL(movieUri.toString());
             Log.v(LOG_TAG, "URL: " + url);
 
-            urlConnection =(HttpURLConnection) url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
 
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -118,8 +114,7 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
             InputStream inputStream = urlConnection.getInputStream();
 
             StringBuffer buffer = new StringBuffer();
-            if(inputStream == null)
-            {
+            if (inputStream == null) {
                 return null;
             }
 
@@ -139,25 +134,22 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
             }
             movieJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG,"Movie JSON String: " + movieJsonStr);
+            Log.v(LOG_TAG, "Movie JSON String: " + movieJsonStr);
 
 
-        }
-        catch (IOException e) {
-            Log.e(LOG_TAG, "Error",e);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error", e);
             movieJsonStr = null;
         }
 
-        try{
+        try {
             //Dixit: to parse(as required) response data from server we call below function
-            if(movieJsonStr !=null)
+            if (movieJsonStr != null)
                 return getMovieDataFromJson(movieJsonStr);
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -174,12 +166,11 @@ public class FetchMovieTask extends AsyncTask<String,Void,MyMovie[]>
 
     @Override
     protected void onPostExecute(MyMovie[] result) {
-        if( result == null)
-            Toast.makeText(mContext,"Please Check Network Connection",Toast.LENGTH_SHORT).show();
-        else
-        {
+        if (result == null)
+            Toast.makeText(mContext, "Please Check Network Connection", Toast.LENGTH_SHORT).show();
+        else {
             mGridImageAdapter.clear();
-            for(MyMovie movieList : result)
+            for (MyMovie movieList : result)
                 mGridImageAdapter.addAll(movieList);
         }
     }

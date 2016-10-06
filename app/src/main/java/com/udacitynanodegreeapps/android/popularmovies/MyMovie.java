@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 /**
  * Created by abhishek.dixit on 2/9/2016.
  */
-public class MyMovie implements Parcelable{
+public class MyMovie implements Parcelable {
 
     String id = null;
     String title = null;
@@ -20,14 +20,12 @@ public class MyMovie implements Parcelable{
 
 //    private Bitmap posterImage = null;
 
-    public MyMovie(String id,String posterPath)
-    {
+    public MyMovie(String id, String posterPath) {
         this.id = id;
         this.posterPath = posterPath;
     }
 
-   public MyMovie(String id, String title, String Overview, String releaseDate, String posterPath, String backdropPath, double voteAvg)
-    {
+    public MyMovie(String id, String title, String Overview, String releaseDate, String posterPath, String backdropPath, double voteAvg) {
         this.id = id;
         this.title = title;
         this.overview = Overview;
@@ -74,7 +72,7 @@ public class MyMovie implements Parcelable{
 
     }
 
-    public static final Parcelable.Creator<MyMovie> CREATOR = new Parcelable.Creator<MyMovie>(){
+    public static final Parcelable.Creator<MyMovie> CREATOR = new Parcelable.Creator<MyMovie>() {
         @Override
         public MyMovie createFromParcel(Parcel sourceParcel) {
             return new MyMovie(sourceParcel);
