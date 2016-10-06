@@ -8,13 +8,12 @@ import android.os.Parcelable;
  */
 public class MovieTrailer implements Parcelable {
 
-//    String id = null;
+    //    String id = null;
     String trailer_title = null;
     String trailer_source = null;
 
 
-    public MovieTrailer(String trailer_title, String trailer_source)
-    {
+    public MovieTrailer(String trailer_title, String trailer_source) {
 //        this.id = id;
         this.trailer_title = trailer_title;
         this.trailer_source = trailer_source;
@@ -42,7 +41,7 @@ public class MovieTrailer implements Parcelable {
 
     }
 
-    public static final Parcelable.Creator<MovieTrailer> CREATOR = new Parcelable.Creator<MovieTrailer>(){
+    public static final Parcelable.Creator<MovieTrailer> CREATOR = new Parcelable.Creator<MovieTrailer>() {
         @Override
         public MovieTrailer createFromParcel(Parcel sourceParcel) {
             return new MovieTrailer(sourceParcel);

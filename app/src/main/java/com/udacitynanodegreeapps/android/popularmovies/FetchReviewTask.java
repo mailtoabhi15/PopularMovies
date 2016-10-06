@@ -18,7 +18,7 @@ import java.net.URL;
 /**
  * Created by abhishek.dixit on 9/18/2016.
  */
-public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
+public class FetchReviewTask extends AsyncTask<String, Void, MovieReview[]> {
 
 
     public static final String LOG_TAG = FetchReviewTask.class.getSimpleName();
@@ -28,7 +28,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
 
     final String APPID = "api_key";
     final String APEEND_TO_RESPONSE = "append_to_response";
-    final String EXTRA_PARAMS ="reviews";
+    final String EXTRA_PARAMS = "reviews";
 
     private MovieReview[] getReviewDataFromJson(String reviewJsonStr)
             throws JSONException {
@@ -47,8 +47,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
 
         MovieReview[] reviewList = new MovieReview[reviewArray.length()];
 
-        for (int i = 0; i < reviewArray.length(); i++)
-        {
+        for (int i = 0; i < reviewArray.length(); i++) {
 
             JSONObject trailerObject = reviewArray.getJSONObject(i);
 
@@ -65,8 +64,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
     @Override
     protected MovieReview[] doInBackground(String... params) {
 
-        if(params.length==0)
-        {
+        if (params.length == 0) {
             return null;
         }
 
@@ -93,7 +91,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
             URL url = new URL(movieUri.toString());
             Log.v(LOG_TAG, "URL: " + url);
 
-            urlConnection =(HttpURLConnection) url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
 
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -102,8 +100,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
             InputStream inputStream = urlConnection.getInputStream();
 
             StringBuffer buffer = new StringBuffer();
-            if(inputStream == null)
-            {
+            if (inputStream == null) {
                 return null;
             }
 
@@ -123,25 +120,22 @@ public class FetchReviewTask extends AsyncTask<String,Void,MovieReview[]> {
             }
             reviewJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG,"Review JSON String: " + reviewJsonStr);
+            Log.v(LOG_TAG, "Review JSON String: " + reviewJsonStr);
 
 
-        }
-        catch (IOException e) {
-            Log.e(LOG_TAG, "Error",e);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error", e);
             reviewJsonStr = null;
         }
 
-        try{
+        try {
             //Dixit: to parse(as required) response data from server we call below function
-            if(reviewJsonStr !=null)
+            if (reviewJsonStr != null)
                 return getReviewDataFromJson(reviewJsonStr);
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

@@ -13,7 +13,7 @@ public class MovieReview implements Parcelable {
     String review_url = null;
 
 
-    public MovieReview(String review_author, String review_content, String review_url)    {
+    public MovieReview(String review_author, String review_content, String review_url) {
 
         this.review_author = review_author;
         this.review_content = review_content;
@@ -42,7 +42,7 @@ public class MovieReview implements Parcelable {
 
     }
 
-    public static final Parcelable.Creator<MovieReview> CREATOR = new Parcelable.Creator<MovieReview>(){
+    public static final Parcelable.Creator<MovieReview> CREATOR = new Parcelable.Creator<MovieReview>() {
         @Override
         public MovieReview createFromParcel(Parcel sourceParcel) {
             return new MovieReview(sourceParcel);
