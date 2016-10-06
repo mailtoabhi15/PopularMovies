@@ -16,8 +16,7 @@ import android.widget.Toast;
 
 import static com.udacitynanodegreeapps.android.popularmovies.DetailActivityFragment.LIST_MOVIES_INDEX;
 
-public class DetailActivity extends AppCompatActivity
-{
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

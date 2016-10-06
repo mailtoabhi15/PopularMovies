@@ -15,7 +15,7 @@ import com.facebook.stetho.Stetho;
 
 import static com.udacitynanodegreeapps.android.popularmovies.DetailActivityFragment.LIST_MOVIES_INDEX;
 
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.ListItemClickCallback{
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.ListItemClickCallback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private boolean mTwoPane;
@@ -40,15 +40,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         //Dixit: imp- Added below code for stetho support in our app, so as to debug/analyse issues
         //using Chrome://inspect tool on desktop.
         Stetho.initialize(
-                        Stetho.newInitializerBuilder(this)
-                                      .enableDumpapp(
-                                              Stetho.defaultDumperPluginsProvider(this))
-                                       .enableWebKitInspector(
-                                               Stetho.defaultInspectorModulesProvider(this))
-                                       .build());
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(
+                                Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(
+                                Stetho.defaultInspectorModulesProvider(this))
+                        .build());
 
-        if(findViewById(R.id.fragment_detail_container) != null)
-        {
+        if (findViewById(R.id.fragment_detail_container) != null) {
             mTwoPane = true;
 
             if (savedInstanceState == null) {
@@ -57,9 +56,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 //               .commit();
 
             }
-        }
-        else{
-            mTwoPane =false;
+        } else {
+            mTwoPane = false;
         }
 
     }
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this,SettingsActivity.class);
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
         }
@@ -91,31 +89,29 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     @Override
     public void onItemSelected(MyMovie movieListItem) {
 
-        if(mTwoPane){
+        if (mTwoPane) {
             //on tablet, means, it will launch DetailFragment
 
             //Dixit-imp:Saving the clicked Uri as Bundle argument & setting it on to fragment
             //so that if the device  is rotated or activity starts again, it will
             //restore the clickuri/index form that point itself, as its in Bundle
             Bundle args = new Bundle();
-            args.putParcelable(LIST_MOVIES_INDEX,movieListItem);
+            args.putParcelable(LIST_MOVIES_INDEX, movieListItem);
             //now the bundled arguments are set & passed on by call to empty fragmant constructor
             //& once teh fragmen tis intialised we can't chnage teh arguments , we can only read form them(getArguments())
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_detail_container,fragment)
+                    .replace(R.id.fragment_detail_container, fragment)
                     .commit();
 
-        }
-        else{
+        } else {
             //on phone, means, it will launch DetailActivity
-            Intent detailAct = new Intent(this,DetailActivity.class);
-                detailAct.putExtra(LIST_MOVIES_INDEX,movieListItem);
-                startActivity(detailAct);
+            Intent detailAct = new Intent(this, DetailActivity.class);
+            detailAct.putExtra(LIST_MOVIES_INDEX, movieListItem);
+            startActivity(detailAct);
         }
-
 
 
     }

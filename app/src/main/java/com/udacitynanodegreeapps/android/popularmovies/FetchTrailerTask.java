@@ -18,7 +18,7 @@ import java.net.URL;
 /**
  * Created by abhishek.dixit on 9/17/2016.
  */
-public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
+public class FetchTrailerTask extends AsyncTask<String, Void, MovieTrailer[]> {
 
 
     public static final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
@@ -28,7 +28,7 @@ public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
 
     final String APPID = "api_key";
     final String APEEND_TO_RESPONSE = "append_to_response";
-    final String EXTRA_PARAMS ="trailers";
+    final String EXTRA_PARAMS = "trailers";
 
 
     private MovieTrailer[] getTrailerDataFromJson(String trailerJsonStr)
@@ -48,8 +48,7 @@ public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
 
         MovieTrailer[] trailerList = new MovieTrailer[trailerArray.length()];
 
-        for (int i = 0; i < trailerArray.length(); i++)
-        {
+        for (int i = 0; i < trailerArray.length(); i++) {
 
             JSONObject trailerObject = trailerArray.getJSONObject(i);
 
@@ -59,14 +58,14 @@ public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
 
         }
 
-        return trailerList;    }
+        return trailerList;
+    }
 
 
     @Override
     protected MovieTrailer[] doInBackground(String... params) {
 
-        if(params.length==0)
-        {
+        if (params.length == 0) {
             return null;
         }
 
@@ -93,7 +92,7 @@ public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
             URL url = new URL(movieUri.toString());
             Log.v(LOG_TAG, "URL: " + url);
 
-            urlConnection =(HttpURLConnection) url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
 
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -102,8 +101,7 @@ public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
             InputStream inputStream = urlConnection.getInputStream();
 
             StringBuffer buffer = new StringBuffer();
-            if(inputStream == null)
-            {
+            if (inputStream == null) {
                 return null;
             }
 
@@ -123,25 +121,22 @@ public class FetchTrailerTask extends AsyncTask<String,Void,MovieTrailer[]> {
             }
             trailerJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG,"Movie JSON String: " + trailerJsonStr);
+            Log.v(LOG_TAG, "Movie JSON String: " + trailerJsonStr);
 
 
-        }
-        catch (IOException e) {
-            Log.e(LOG_TAG, "Error",e);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error", e);
             trailerJsonStr = null;
         }
 
-        try{
+        try {
             //Dixit: to parse(as required) response data from server we call below function
-            if(trailerJsonStr !=null)
+            if (trailerJsonStr != null)
                 return getTrailerDataFromJson(trailerJsonStr);
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

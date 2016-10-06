@@ -18,9 +18,11 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
 import static com.udacitynanodegreeapps.android.popularmovies.R.string.favourite;
 
 /**
@@ -39,26 +41,25 @@ public class DetailActivityFragment extends Fragment {
     public DetailActivityFragment() {
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//       if(savedInstanceState != null )
-//       {
-//           if(savedInstanceState.containsKey("movietrailer")){
-//               mtrailerList = savedInstanceState.getParcelableArray("movietrailer");
-//           }
-//           if(savedInstanceState.containsKey("moviereview")){
-//               mreviewList = savedInstanceState.getParcelableArray("moviereview");
-//           }
-//      }
-//    }
-//
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        outState.putParcelableArray("movietrailer", mtrailerList);
-//        outState.putParcelableArray("moviereview", mreviewList);
-//        super.onSaveInstanceState(outState);
-//    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("movietrailer")) {
+                mtrailerList = (MovieTrailer[]) savedInstanceState.getParcelableArray("movietrailer");
+            }
+            if (savedInstanceState.containsKey("moviereview")) {
+                mreviewList = (MovieReview[]) savedInstanceState.getParcelableArray("moviereview");
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArray("movietrailer", mtrailerList);
+        outState.putParcelableArray("moviereview", mreviewList);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,7 +68,7 @@ public class DetailActivityFragment extends Fragment {
         //Dixit-imp:start: added in lesson-5.40(2 Pane Ui)-Handling List Item Click
         //Reading the saved bundle arguments i.e clicked uri/item, if the activity was killed/started
         Bundle args = getArguments();
-        if (args!= null) {
+        if (args != null) {
             movieList = args.getParcelable(LIST_MOVIES_INDEX);
         }
         //Dixit:end
@@ -76,7 +77,7 @@ public class DetailActivityFragment extends Fragment {
 
         //Now we will handle the Intent we sent from MainActivityFragment here
 //        Intent intent = getActivity().getIntent();
-        if (movieList !=null) {
+        if (movieList != null) {
 
 //            final MyMovie movieList = intent.getParcelableExtra("movielist");
 
@@ -102,10 +103,10 @@ public class DetailActivityFragment extends Fragment {
                     .load(posterUri)
                     .placeholder(R.drawable.sample_0)
                     .error(R.drawable.sample_7)
-                            // .noFade()
+                    // .noFade()
 //                    .resize(55,55)
 //                    .centerCrop()
-                            //.fit()
+                    //.fit()
                     .into(imgView);
 
             ImageView imgBackdrpView = (ImageView) rootView.findViewById(R.id.backdrop_imageview);
@@ -126,11 +127,9 @@ public class DetailActivityFragment extends Fragment {
             Map<String, ?> keys = mfavPref.getAll();
 
             for (Map.Entry<String, ?> entry : keys.entrySet()) {
-                if (entry.getValue().toString() != null)
-                {
+                if (entry.getValue().toString() != null) {
                     Log.d("mfavPref values", entry.getKey() + ": " + entry.getValue().toString());
-                    if (entry.getKey().equals(movieList.id))
-                    {
+                    if (entry.getKey().equals(movieList.id)) {
                         favBox.setChecked(true);
                         favBox.setText(R.string.remove_fav);
                     }
@@ -143,8 +142,7 @@ public class DetailActivityFragment extends Fragment {
 
                     SharedPreferences.Editor prefEditor = mfavPref.edit();
 
-                    if(isChecked)
-                    {
+                    if (isChecked) {
                         if (!mfavPref.contains(movieList.id)) {
 
                             Gson gson = new Gson();
@@ -154,9 +152,7 @@ public class DetailActivityFragment extends Fragment {
                             prefEditor.apply();
                             favBox.setText(R.string.remove_fav);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         prefEditor.remove(movieList.id);
                         prefEditor.apply();
                         favBox.setText(R.string.favourite);
@@ -165,7 +161,7 @@ public class DetailActivityFragment extends Fragment {
             });
 
             //Add Trailers list
-            addTrailerView(rootView,movieList.id);
+            addTrailerView(rootView, movieList.id);
 
             //Add Review List
             addReviewView(rootView, movieList.id);
@@ -175,106 +171,112 @@ public class DetailActivityFragment extends Fragment {
         return rootView;
     }
 
-private void addTrailerView(View rootView,String movieId)
-{
-    final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+    private void addTrailerView(View rootView, String movieId) {
+        final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
-    final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/" ;
+        final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/";
 
-    FetchTrailerTask trailerTask = new FetchTrailerTask();
+        if (mtrailerList == null) {
+            FetchTrailerTask trailerTask = new FetchTrailerTask();
 
-    trailerTask.execute(movieId);
+            trailerTask.execute(movieId);
 
-    try {
-        //Dixit-Imp: This is a Blocking call , Needs to be revisited with/for better design
-        mtrailerList = trailerTask.get();
-
-        if(mtrailerList == null)
-            return;
-
-        for(final MovieTrailer trailerItem : mtrailerList) {
-
-            View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item,null);
-
-            trailerView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //play youtube yVideo
-                    Uri youtubeUri = Uri.parse(YOUTUBE_BASE_URL).buildUpon()
-                            .appendPath(trailerItem.trailer_source)
-                            .build();
-
-                    Intent watchVideoIntent = new Intent(Intent.ACTION_VIEW,youtubeUri);
-                    startActivity(watchVideoIntent);
-
-                }
-            });
-
-            TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
-            trailerTitle.setText(trailerItem.trailer_title);
-
-            ImageView videoThumbnailView = (ImageView) trailerView.findViewById(R.id.trailer_image);
-            String thumbnailUrl = YOUTUBE_THUMBNAIL + trailerItem.trailer_source + "/0.jpg";
-
-            Picasso.with(getContext())
-                    .load(thumbnailUrl)
-                    .placeholder(R.drawable.sample_0)
-                    .error(android.R.drawable.ic_media_play)
-                    .into(videoThumbnailView);
-
-
-            LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
-            trailerLayout.addView(trailerView);
+            //Dixit-Imp: This is a Blocking call , Needs to be revisited with/for better design
+            try {
+                mtrailerList = trailerTask.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
+        if (mtrailerList!=null) {
 
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    } catch (ExecutionException e) {
-        e.printStackTrace();
+            for (final MovieTrailer trailerItem : mtrailerList) {
+
+                View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, null);
+
+                trailerView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //play youtube yVideo
+                        Uri youtubeUri = Uri.parse(YOUTUBE_BASE_URL).buildUpon()
+                                .appendPath(trailerItem.trailer_source)
+                                .build();
+
+                        Intent watchVideoIntent = new Intent(Intent.ACTION_VIEW, youtubeUri);
+                        startActivity(watchVideoIntent);
+
+                    }
+                });
+
+                TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
+                trailerTitle.setText(trailerItem.trailer_title);
+
+                ImageView videoThumbnailView = (ImageView) trailerView.findViewById(R.id.trailer_image);
+                String thumbnailUrl = YOUTUBE_THUMBNAIL + trailerItem.trailer_source + "/0.jpg";
+
+                Picasso.with(getContext())
+                        .load(thumbnailUrl)
+                        .placeholder(R.drawable.sample_0)
+                        .error(android.R.drawable.ic_media_play)
+                        .into(videoThumbnailView);
+
+
+                LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
+                trailerLayout.addView(trailerView);
+            }
+        }
+        else {
+            //Dixit: Need to show some Dummy Data for NO TRAILERS Available
+            return;
+        }
     }
 
-}
+    private void addReviewView(View rootView, String movieId) {
 
-    private void addReviewView(View rootView, String movieId)
-    {
 
-        FetchReviewTask reviewTask = new FetchReviewTask();
+        if (mreviewList == null) {
+            FetchReviewTask reviewTask = new FetchReviewTask();
 
-        reviewTask.execute(movieId);
+            reviewTask.execute(movieId);
 
-        try {
             //Dixit-Imp: This iks a Blocking call , Needs to be revisited with/for better design
-            mreviewList = reviewTask.get();
+            try {
+                mreviewList = reviewTask.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
 
-            if(mreviewList == null)
-                return;
+        if (mreviewList != null) {
 
             for (final MovieReview reviewItem : mreviewList) {
 
-            View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
+                View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
 
-//            reviewView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    //open url
-//                }
-//            });
+    //            reviewView.setOnClickListener(new View.OnClickListener() {
+    //                @Override
+    //                public void onClick(View v) {
+    //                    //open url
+    //                }
+    //            });
 
-            TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
-            reviewAuthor.setText(reviewItem.review_author);
+                TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
+                reviewAuthor.setText(reviewItem.review_author);
 
-            TextView reviewContent = (TextView) reviewView.findViewById(R.id.review_text_content);
-            reviewContent.setText(reviewItem.review_content);
+                TextView reviewContent = (TextView) reviewView.findViewById(R.id.review_text_content);
+                reviewContent.setText(reviewItem.review_content);
 
-            LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
-            reviewLayout.addView(reviewView);
+                LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
+                reviewLayout.addView(reviewView);
+            }
         }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        else{
+            //Dixit: Need to show some Dummy Data for NO REVIEWS Available
+            return;
         }
-
     }
 }

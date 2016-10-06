@@ -33,11 +33,11 @@ public class ImageAdapter extends ArrayAdapter<MyMovie> {
         //to get the object from the ArrayAdapter at the required position
         MyMovie movie = getItem(position);
 
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item_movies, parent, false);
         }
 
-          ImageView gridImageView = (ImageView) convertView.findViewById(R.id.grid_item_movies_imageview);
+        ImageView gridImageView = (ImageView) convertView.findViewById(R.id.grid_item_movies_imageview);
 //        gridImageView.setLayoutParams(new GridView.LayoutParams(185, 185));
 //        gridImageView.setScaleType(ImageView.ScaleType.CENTER_CROP); //Controls how the image should be resized or moved to match the size of this ImageView.
 //        gridImageView.setPadding(8, 8, 8, 8);
@@ -45,12 +45,12 @@ public class ImageAdapter extends ArrayAdapter<MyMovie> {
 //        gridImageView.setImageResource(nImage);
 
 
-        String base_uri ="http://image.tmdb.org/t/p/";
+        String base_uri = "http://image.tmdb.org/t/p/";
         String size = "w185";
 
         String movieUri = base_uri + size + "/" + movie.posterPath;
 
-        Log.v("ImageAdapter ","Movie Uri: " +movieUri );
+        Log.v("ImageAdapter ", "Movie Uri: " + movieUri);
 
         Picasso.with(getContext())
                 .load(movieUri)
