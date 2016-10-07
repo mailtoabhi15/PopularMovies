@@ -28,7 +28,7 @@ import static com.udacitynanodegreeapps.android.popularmovies.R.string.favourite
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailActivityFragment extends Fragment {
+public class DetailActivityFragment extends Fragment implements eventCallback {
 
     //Dixit: added in lesson-5.40(2 Pane Ui)-Handling List Item Click
     static final String LIST_MOVIES_INDEX = "movies_index";
@@ -171,6 +171,12 @@ public class DetailActivityFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onEventReady(MoviesExtra[] result) {
+
+    }
+
+
     private void addTrailerView(View rootView, String movieId) {
         final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
@@ -279,4 +285,5 @@ public class DetailActivityFragment extends Fragment {
             return;
         }
     }
+
 }
