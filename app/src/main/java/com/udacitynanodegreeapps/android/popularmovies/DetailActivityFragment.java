@@ -180,7 +180,7 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
         final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/";
 
         for(final MoviesExtra moviesExtra : moviesExtraList ) {
-            if(moviesExtra.getTrailer_source() != null){
+            if(moviesExtra.getTrailer_source() != null && (getContext()!=null)){
 
                 View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, null);
 
@@ -215,7 +215,7 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
                 trailerLayout.addView(trailerView);
 
             }
-            if(moviesExtra.getReview_content() !=null){
+            if(moviesExtra.getReview_content() !=null && (getContext()!=null)){
                 View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
 
                 TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
