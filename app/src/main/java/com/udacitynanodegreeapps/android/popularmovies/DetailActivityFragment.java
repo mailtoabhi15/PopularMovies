@@ -23,18 +23,17 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static com.udacitynanodegreeapps.android.popularmovies.R.string.favourite;
-
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailActivityFragment extends Fragment {
+public class DetailActivityFragment extends Fragment implements EventCallback {
 
     //Dixit: added in lesson-5.40(2 Pane Ui)-Handling List Item Click
     static final String LIST_MOVIES_INDEX = "movies_index";
 
     private MyMovie movieList;
 
+    private View rootView ;
     private MovieTrailer[] mtrailerList;
     private MovieReview[] mreviewList;
 
@@ -73,7 +72,7 @@ public class DetailActivityFragment extends Fragment {
         }
         //Dixit:end
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         //Now we will handle the Intent we sent from MainActivityFragment here
 //        Intent intent = getActivity().getIntent();
@@ -160,16 +159,79 @@ public class DetailActivityFragment extends Fragment {
                 }
             });
 
-            //Add Trailers list
-            addTrailerView(rootView, movieList.id);
-
-            //Add Review List
-            addReviewView(rootView, movieList.id);
+            FetchMoviesExtraTask moviesExtra = new FetchMoviesExtraTask(this);
+            moviesExtra.execute(movieList.id);
+//            //Add Trailers list
+//            addTrailerView(rootView, movieList.id);
+//
+//            //Add Review List
+//            addReviewView(rootView, movieList.id);
 
 
         }
         return rootView;
     }
+
+    @Override
+    public void onEventReady(ArrayList<MoviesExtra> moviesExtraList) {
+
+        final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+
+        final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/";
+
+        for(final MoviesExtra moviesExtra : moviesExtraList ) {
+            if(moviesExtra.getTrailer_source() != null && (getContext()!=null)){
+
+                View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, null);
+
+                trailerView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //play youtube yVideo
+                        Uri youtubeUri = Uri.parse(YOUTUBE_BASE_URL).buildUpon()
+                                .appendPath(moviesExtra.getTrailer_source())
+                                .build();
+
+                        Intent watchVideoIntent = new Intent(Intent.ACTION_VIEW, youtubeUri);
+                        startActivity(watchVideoIntent);
+
+                    }
+                });
+
+                TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
+                trailerTitle.setText(moviesExtra.getTrailer_title());
+
+                ImageView videoThumbnailView = (ImageView) trailerView.findViewById(R.id.trailer_image);
+                String thumbnailUrl = YOUTUBE_THUMBNAIL + moviesExtra.getTrailer_source() + "/0.jpg";
+
+                Picasso.with(getContext())
+                        .load(thumbnailUrl)
+                        .placeholder(R.drawable.sample_0)
+                        .error(android.R.drawable.ic_media_play)
+                        .into(videoThumbnailView);
+
+
+                LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
+                trailerLayout.addView(trailerView);
+
+            }
+            if(moviesExtra.getReview_content() !=null && (getContext()!=null)){
+                View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
+
+                TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
+                reviewAuthor.setText(moviesExtra.getReview_author());
+
+                TextView reviewContent = (TextView) reviewView.findViewById(R.id.review_text_content);
+                reviewContent.setText(moviesExtra.getReview_content());
+
+                LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
+                reviewLayout.addView(reviewView);
+
+            }
+        }
+
+    }
+
 
     private void addTrailerView(View rootView, String movieId) {
         final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
@@ -279,4 +341,5 @@ public class DetailActivityFragment extends Fragment {
             return;
         }
     }
+
 }
