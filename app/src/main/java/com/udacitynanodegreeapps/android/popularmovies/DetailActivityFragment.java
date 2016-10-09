@@ -33,9 +33,9 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
 
     private MyMovie movieList;
 
+    ArrayList<MoviesExtra> moviesExtraList;
+
     private View rootView ;
-    private MovieTrailer[] mtrailerList;
-    private MovieReview[] mreviewList;
 
     public DetailActivityFragment() {
     }
@@ -45,18 +45,14 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("movietrailer")) {
-                mtrailerList = (MovieTrailer[]) savedInstanceState.getParcelableArray("movietrailer");
-            }
-            if (savedInstanceState.containsKey("moviereview")) {
-                mreviewList = (MovieReview[]) savedInstanceState.getParcelableArray("moviereview");
+                moviesExtraList = savedInstanceState.getParcelableArrayList("moviesExtra");
             }
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArray("movietrailer", mtrailerList);
-        outState.putParcelableArray("moviereview", mreviewList);
+        outState.putParcelableArrayList("moviesExtra", moviesExtraList);
         super.onSaveInstanceState(outState);
     }
 
@@ -161,13 +157,6 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
 
             FetchMoviesExtraTask moviesExtra = new FetchMoviesExtraTask(this);
             moviesExtra.execute(movieList.id);
-//            //Add Trailers list
-//            addTrailerView(rootView, movieList.id);
-//
-//            //Add Review List
-//            addReviewView(rootView, movieList.id);
-
-
         }
         return rootView;
     }
@@ -230,116 +219,6 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
             }
         }
 
-    }
-
-
-    private void addTrailerView(View rootView, String movieId) {
-        final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
-
-        final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/";
-
-        if (mtrailerList == null) {
-            FetchTrailerTask trailerTask = new FetchTrailerTask();
-
-            trailerTask.execute(movieId);
-
-            //Dixit-Imp: This is a Blocking call , Needs to be revisited with/for better design
-            try {
-                mtrailerList = trailerTask.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        if (mtrailerList!=null) {
-
-            for (final MovieTrailer trailerItem : mtrailerList) {
-
-                View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, null);
-
-                trailerView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //play youtube yVideo
-                        Uri youtubeUri = Uri.parse(YOUTUBE_BASE_URL).buildUpon()
-                                .appendPath(trailerItem.trailer_source)
-                                .build();
-
-                        Intent watchVideoIntent = new Intent(Intent.ACTION_VIEW, youtubeUri);
-                        startActivity(watchVideoIntent);
-
-                    }
-                });
-
-                TextView trailerTitle = (TextView) trailerView.findViewById(R.id.trailer_text_title);
-                trailerTitle.setText(trailerItem.trailer_title);
-
-                ImageView videoThumbnailView = (ImageView) trailerView.findViewById(R.id.trailer_image);
-                String thumbnailUrl = YOUTUBE_THUMBNAIL + trailerItem.trailer_source + "/0.jpg";
-
-                Picasso.with(getContext())
-                        .load(thumbnailUrl)
-                        .placeholder(R.drawable.sample_0)
-                        .error(android.R.drawable.ic_media_play)
-                        .into(videoThumbnailView);
-
-
-                LinearLayout trailerLayout = (LinearLayout) rootView.findViewById(R.id.trailer_layout);
-                trailerLayout.addView(trailerView);
-            }
-        }
-        else {
-            //Dixit: Need to show some Dummy Data for NO TRAILERS Available
-            return;
-        }
-    }
-
-    private void addReviewView(View rootView, String movieId) {
-
-
-        if (mreviewList == null) {
-            FetchReviewTask reviewTask = new FetchReviewTask();
-
-            reviewTask.execute(movieId);
-
-            //Dixit-Imp: This iks a Blocking call , Needs to be revisited with/for better design
-            try {
-                mreviewList = reviewTask.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (mreviewList != null) {
-
-            for (final MovieReview reviewItem : mreviewList) {
-
-                View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
-
-    //            reviewView.setOnClickListener(new View.OnClickListener() {
-    //                @Override
-    //                public void onClick(View v) {
-    //                    //open url
-    //                }
-    //            });
-
-                TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
-                reviewAuthor.setText(reviewItem.review_author);
-
-                TextView reviewContent = (TextView) reviewView.findViewById(R.id.review_text_content);
-                reviewContent.setText(reviewItem.review_content);
-
-                LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
-                reviewLayout.addView(reviewView);
-            }
-        }
-        else{
-            //Dixit: Need to show some Dummy Data for NO REVIEWS Available
-            return;
-        }
     }
 
 }
