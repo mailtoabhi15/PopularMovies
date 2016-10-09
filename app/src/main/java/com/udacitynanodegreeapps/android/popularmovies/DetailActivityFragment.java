@@ -44,7 +44,7 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("movietrailer")) {
+            if (savedInstanceState.containsKey("moviesExtra")) {
                 moviesExtraList = savedInstanceState.getParcelableArrayList("moviesExtra");
             }
         }
