@@ -1,8 +1,10 @@
 package com.udacitynanodegreeapps.android.popularmovies;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +27,7 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, ArrayList<Movi
 
     public static final String LOG_TAG = FetchMoviesExtraTask.class.getSimpleName();
     private EventCallback eventCallback;
+    private Context mContext;
 
 
     final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie?";
@@ -33,7 +36,8 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, ArrayList<Movi
     final String APEEND_TO_RESPONSE = "append_to_response";
     final String EXTRA_PARAMS = "trailers,reviews";
 
-    public FetchMoviesExtraTask(EventCallback eventCallback){
+    public FetchMoviesExtraTask(Context context, EventCallback eventCallback){
+        mContext = context;
         this.eventCallback = eventCallback;
 
     }
@@ -195,8 +199,11 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, ArrayList<Movi
     @Override
     protected void onPostExecute(ArrayList<MoviesExtra> moviesExtras) {
         super.onPostExecute(moviesExtras);
-        if(!moviesExtras.isEmpty() ){
+        if( (moviesExtras!= null) && (!moviesExtras.isEmpty()) ){
             eventCallback.onEventReady(moviesExtras);
+        }
+        else {
+           Toast.makeText(mContext,"Data not available",Toast.LENGTH_SHORT).show();
         }
     }
 }

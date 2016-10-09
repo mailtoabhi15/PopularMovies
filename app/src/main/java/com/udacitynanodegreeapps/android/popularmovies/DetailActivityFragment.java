@@ -45,7 +45,7 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("moviesExtra") && (!moviesExtraList.isEmpty())) {
+            if (savedInstanceState.containsKey("moviesExtra")) {
                 moviesExtraList = savedInstanceState.getParcelableArrayList("moviesExtra");
             }
         }
@@ -53,7 +53,9 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("moviesExtra", moviesExtraList);
+        if(moviesExtraList!=null) {
+            outState.putParcelableArrayList("moviesExtra", moviesExtraList);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -156,8 +158,15 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
                 }
             });
 
-            FetchMoviesExtraTask moviesExtra = new FetchMoviesExtraTask(this);
-            moviesExtra.execute(movieList.id);
+            if(moviesExtraList == null) {
+                FetchMoviesExtraTask moviesExtra = new FetchMoviesExtraTask(getActivity(),this);
+                moviesExtra.execute(movieList.id);
+            }
+            else{
+                showTrailers(moviesExtraList);
+
+                showReviews(moviesExtraList);
+            }
 //            //Add Trailers list
 //            addTrailerView(rootView, movieList.id);
 //
@@ -170,14 +179,24 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
     }
 
     @Override
-    public void onEventReady(ArrayList<MoviesExtra> moviesExtraList) {
+    public void onEventReady(ArrayList<MoviesExtra> result) {
+
+        moviesExtraList = result;
+
+        showTrailers(moviesExtraList);
+
+        showReviews(moviesExtraList);
+
+    }
+
+    private void showTrailers(ArrayList<MoviesExtra> moviesExtraList) {
 
         final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
         final String YOUTUBE_THUMBNAIL = "http://img.youtube.com/vi/";
 
-        for(final MoviesExtra moviesExtra : moviesExtraList ) {
-            if(moviesExtra.getTrailer_source() != null && (getContext()!=null)){
+        for (final MoviesExtra moviesExtra : moviesExtraList) {
+            if (moviesExtra.getTrailer_source() != null && (getContext() != null)) {
 
                 View trailerView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item, null);
 
@@ -212,7 +231,13 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
                 trailerLayout.addView(trailerView);
 
             }
-            if(moviesExtra.getReview_content() !=null && (getContext()!=null)){
+        }
+    }
+
+    private void showReviews(ArrayList<MoviesExtra> moviesExtraList) {
+
+        for (final MoviesExtra moviesExtra : moviesExtraList) {
+            if (moviesExtra.getReview_content() != null && (getContext() != null)) {
                 View reviewView = LayoutInflater.from(getContext()).inflate(R.layout.review_item, null);
 
                 TextView reviewAuthor = (TextView) reviewView.findViewById(R.id.review_text_author);
@@ -223,7 +248,6 @@ public class DetailActivityFragment extends Fragment implements EventCallback {
 
                 LinearLayout reviewLayout = (LinearLayout) rootView.findViewById(R.id.review_layout);
                 reviewLayout.addView(reviewView);
-
             }
         }
 
