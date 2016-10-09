@@ -20,20 +20,25 @@ import java.util.ArrayList;
  * Created by abhishek.dixit on 10/7/2016.
  */
 
-public class FetchMoviesExtraTask extends AsyncTask<String, Void, MoviesExtra[]> {
+public class FetchMoviesExtraTask extends AsyncTask<String, Void, ArrayList<MoviesExtra>> {
 
 
-    public static final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
+    public static final String LOG_TAG = FetchMoviesExtraTask.class.getSimpleName();
+    private EventCallback eventCallback;
 
 
     final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie?";
 
     final String APPID = "api_key";
     final String APEEND_TO_RESPONSE = "append_to_response";
-    final String EXTRA_PARAMS = "trailers";
+    final String EXTRA_PARAMS = "trailers,reviews";
 
+    public FetchMoviesExtraTask(EventCallback eventCallback){
+        this.eventCallback = eventCallback;
 
-    private MoviesExtra[] getMoviesExtraDataFromJson(String moviesExtraJsonStr)
+    }
+
+    private ArrayList<MoviesExtra> getMoviesExtraDataFromJson(String moviesExtraJsonStr)
             throws JSONException {
 
         final String TRAILERS = "trailers";
@@ -59,7 +64,6 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, MoviesExtra[]>
 
         JSONArray reviewArray = reviewJsonObject.getJSONArray(REVIEWS_RESULTS);
 
-        MoviesExtra moviesExtra = new MoviesExtra();
         int loop =0;
 
         if(trailerArray.length() > reviewArray.length())
@@ -72,18 +76,24 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, MoviesExtra[]>
 
         for (int i = 0; i < loop; i++) {
 
-            JSONObject trailerObject = trailerArray.getJSONObject(i);
+            MoviesExtra moviesExtra = new MoviesExtra();
 
-            if(trailerObject.length()!=0) {
-                moviesExtra.setTrailer_title(trailerObject.getString(TRAILER_TITLE));
-                moviesExtra.setTrailer_source(trailerObject.getString(TRAILER_SOURCE));
+            if (!trailerArray.isNull(i)) {
+                JSONObject trailerObject = trailerArray.getJSONObject(i);
+
+                if (!trailerObject.isNull(TRAILER_TITLE)) {
+                    moviesExtra.setTrailer_title(trailerObject.getString(TRAILER_TITLE));
+                    moviesExtra.setTrailer_source(trailerObject.getString(TRAILER_SOURCE));
+                }
             }
-            JSONObject reviewObject = reviewArray.getJSONObject(i);
+            if (!reviewArray.isNull(i)) {
+                JSONObject reviewObject = reviewArray.getJSONObject(i);
 
-            if(reviewObject.isNull(CONTENT)) {
-                moviesExtra.setReview_author(reviewObject.getString(AUTHOR));
-                moviesExtra.setReview_content(reviewObject.getString(CONTENT));
-                moviesExtra.setReview_url(reviewObject.getString(URL));
+                if (!reviewObject.isNull(CONTENT)) {
+                    moviesExtra.setReview_author(reviewObject.getString(AUTHOR));
+                    moviesExtra.setReview_content(reviewObject.getString(CONTENT));
+                    moviesExtra.setReview_url(reviewObject.getString(URL));
+                }
             }
             moviesExtraList.add(moviesExtra);
 
@@ -94,7 +104,7 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, MoviesExtra[]>
 
 
     @Override
-    protected MoviesExtra[] doInBackground(String... params) {
+    protected ArrayList<MoviesExtra> doInBackground(String... params) {
 
         if (params.length == 0) {
             return null;
@@ -182,5 +192,11 @@ public class FetchMoviesExtraTask extends AsyncTask<String, Void, MoviesExtra[]>
         return null;
     }
 
-
+    @Override
+    protected void onPostExecute(ArrayList<MoviesExtra> moviesExtras) {
+        super.onPostExecute(moviesExtras);
+        if(!moviesExtras.isEmpty() ){
+            eventCallback.onEventReady(moviesExtras);
+        }
+    }
 }
